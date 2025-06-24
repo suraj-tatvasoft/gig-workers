@@ -7,20 +7,24 @@
     "build": "prisma generate && next build",
     "start": "prisma migrate deploy && next start",
     "type-check": "tsc",
-    "lint": "next lint",
-    "lint:fix": "next lint \"src/**/*.{js,ts,jsx,tsx}\" --fix",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --ignore-pattern .gitignore \"src/**/*.+(ts|js|tsx)\" --write",
-    "postinstall": "prisma generate && husky install",
+    "postinstall": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:seed": "prisma db seed",
     "prisma:update": "npx prisma migrate dev --name update_table",
     "prisma:reset": "npx prisma migrate reset"
   },
   "dependencies": {
+    "@ant-design/nextjs-registry": "^1.0.2",
+    "antd": "^5.26.1",
+    "lucide-react": "^0.522.0",
     "next": "15.3.3",
     "prisma": "^6.9.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
@@ -43,15 +47,14 @@
     "eslint-plugin-prettier": "^5.4.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "husky": "^9.1.7",
     "lint-staged": "^15.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
-  "lint-staged": {
-    "./src/**/*.{ts,js,jsx,tsx}": [
-      "yarn lint --fix",
-      "yarn format"
-    ]
-  }
+ "lint-staged": {
+  "*.{ts,tsx,js,jsx}": [
+    "eslint --fix",
+    "prettier --write"
+  ]
+}
 }
