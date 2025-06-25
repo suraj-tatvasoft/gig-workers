@@ -395,7 +395,7 @@ function LandingPage() {
             <Link href="#" className="font-inter">
               Community
             </Link>
-            <Link href="#" className="font-inter">
+            <Link href="/about" className="font-inter">
               About us
             </Link>
             <Link href="#" className="font-inter">
