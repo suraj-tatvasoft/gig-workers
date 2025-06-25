@@ -1,15 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { Form, Button, Typography } from 'antd';
+import { Form, Button, Typography, Image } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import TextField from '@/components/TextField';
 import { loginSchema } from '../../../schemas/auth';
+import { useRouter } from 'next/navigation';
+import { Images } from '@/lib/images';
 
 const { Title } = Typography;
 
 export default function LoginForm() {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [form] = Form.useForm();
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
@@ -30,6 +34,7 @@ export default function LoginForm() {
         <span className="text-[#FFF2E3]">Welcome back</span>
       </Title>
       <Form
+       form={form}
         name="login"
         onFinish={handleSubmit}
         layout="vertical"
@@ -59,9 +64,13 @@ export default function LoginForm() {
           labelClassName="text-[#FFF2E3]"
         />
         <div className="flex justify-end w-full mt-2">
-          <a href="#" className="underline font-medium text-[#FFF2E3] !text-[#FFF2E3]">
+          <button
+            type="button"
+            onClick={() => router.push('/auth/forgot-password')}
+            className="font-medium underline text-[#FFF2E3] bg-transparent border-none p-0 cursor-pointer"
+          >
             Forgot password ?
-          </a>
+          </button>
         </div>
         <Form.Item>
           <Button htmlType="submit" block size="large" className="mt-5 bg-[#635d57] text-[#FFF2E3] border-none shadow-none font-large">
@@ -69,6 +78,20 @@ export default function LoginForm() {
           </Button>
         </Form.Item>
       </Form>
+      <div className="text-[#FFF2E3] mt-6 mb-3 text-center text-sm">or sign in using</div>
+        <div className="flex justify-center mb-4">
+          <Image src={Images.googleIcon} alt="Google Icon" width={36} height={36} className="cursor-pointer" />
+        </div>
+        <div className="text-center text-[#FFF2E3] text-sm">
+          Don&apos;t have an account?{' '}
+          <button
+            type="button"
+            onClick={() => router.push('/auth/signup')}
+            className="font-medium underline text-[#FFF2E3] bg-transparent border-none p-0 cursor-pointer"
+          >
+            Sign up
+          </button>
+        </div>
     </>
   );
 }

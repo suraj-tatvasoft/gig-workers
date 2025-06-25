@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Form, Button, Typography, Checkbox } from 'antd';
+import { Form, Button, Typography, Checkbox, Image } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { signupSchema } from '../../../schemas/auth';
 import TextField from '@/components/TextField';
+import { Images } from '@/lib/images';
+import { useRouter } from 'next/navigation';
 
 const { Title } = Typography;
 interface SignupFormValues {
@@ -19,7 +21,7 @@ interface SignupFormValues {
 export default function SignupForm() {
   const [form] = Form.useForm();
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter();
   const handleSubmit = async (values: SignupFormValues) => {
     try {
       await signupSchema.validate(values, { abortEarly: false });
@@ -42,7 +44,7 @@ export default function SignupForm() {
       <Title level={3} className="text-center mb-6 !text-2xl">
         <span className="text-[#FFF2E3]">Join Us</span>
       </Title>
-      <div className="w-full max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="w-full">
         <Form
           form={form}
           name="signup"
@@ -128,6 +130,16 @@ export default function SignupForm() {
             Sign up
           </Button>
         </Form>
+        <div className="text-center text-[#fff2e3] mt-6 mb-3">or sign in using</div>
+        <div className="flex justify-center mb-4">
+          <Image src={Images.googleIcon} alt="Google Icon" width={24} height={24} />
+        </div>
+        <div className="text-center text-[#fff2e3]">
+          Already have an account?{' '}
+          <a className="font-medium text-[#fff2e3] underline" onClick={() => router.push('/auth/login')}>
+            Log In
+          </a>
+        </div>
       </div>
     </>
   );
