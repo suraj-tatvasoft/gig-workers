@@ -50,3 +50,11 @@ body {
   scrollbar-color: #635d57 #222;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
