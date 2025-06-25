@@ -19,9 +19,6 @@ export async function middleware(req: NextRequest) {
   // Try to get JWT token from cookie
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-   console.log('1111 [MIDDLEWARE] Path:', req.nextUrl.pathname);
-  console.log('2222 [MIDDLEWARE] Token:', token);
-
   // If no token — unauthorized
   if (!token) {
     return NextResponse.json(

@@ -16,7 +16,7 @@ const Signup = () => {
         <SignupForm />
         <div className="text-center text-[#fff2e3] mt-6 mb-3">or sign in using</div>
         <div className="flex justify-center mb-4">
-          <Image src={Images.googleIcon} alt="Google Icon" width={24} height={24} unoptimized />
+          <Image src={Images.googleIcon} alt="Google Icon" width={36} height={36} unoptimized />
         </div>
         <div className="text-center text-[#fff2e3]">
           Already have an account?{' '}

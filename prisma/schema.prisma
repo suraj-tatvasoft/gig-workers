@@ -22,7 +22,7 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   first_name      String
-  last_name       String?
+  last_name       String
   is_verified Boolean
   password  String
   role      Role    @default(user)
