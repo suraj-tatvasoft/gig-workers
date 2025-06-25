@@ -5,6 +5,7 @@ import { Form, Button, Typography } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import TextField from '@/components/TextField';
 import { loginSchema } from '../../../schemas/auth';
+import { signIn } from 'next-auth/react';
 
 const { Title } = Typography;
 
@@ -15,6 +16,18 @@ export default function LoginForm() {
     try {
       await loginSchema.validate(values);
       setError(null);
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (result?.ok) {
+        alert('done')
+      } else {
+        console.log('Login failed');
+        setError('Invalid email or password');
+      }
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
