@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Images } from '@/lib/images';
-import ForgotPasswordForm from './ForgotPasswordForm';
+import VerifyOtpForm from './VerifyOtpForm';
 
 export default function ForgotPasswordPage() {
 
@@ -13,7 +13,7 @@ export default function ForgotPasswordPage() {
         <div className="flex justify-center items-center mb-6">
           <Image src={Images.logo} alt="Company Logo" width={80} height={80} priority />
         </div>
-        <ForgotPasswordForm />
+        <VerifyOtpForm />
       </div>
     </div>
   );
