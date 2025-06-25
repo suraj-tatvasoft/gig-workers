@@ -1,17 +1,14 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Form, Button, Typography } from 'antd';
+import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import TextField from '@/components/TextField';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import ErrorAlert from '@/components/ErrorAlert';
 import { loginSchema } from '../../../schemas/auth';
 
 const { Title } = Typography;
 
 export default function LoginForm() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (values: { email: string; password: string }) => {
@@ -29,25 +26,26 @@ export default function LoginForm() {
 
   return (
     <>
-      <Title level={3} className="login-title">
-        Welcome back
+      <Title level={3} className="text-center mb-6 !text-2xl">
+        <span className="text-[#FFF2E3]">Welcome back</span>
       </Title>
       <Form
         name="login"
         onFinish={handleSubmit}
         layout="vertical"
-        className="login-form"
+        className="w-full"
         initialValues={{ email: '', password: '' }}
         requiredMark={false}
       >
         <TextField
-          label="Username"
-          name="username"
+          name="email"
+          label="Email"
           required
           type="text"
-          className="form-input"
-          placeholder="Enter your username"
-          icon={<UserOutlined className="form-icon" />}
+          placeholder="Enter your email"
+          icon={<MailOutlined className="text-[#FFF2E3]" />}
+          className="bg-transparent text-white border border-[#444] placeholder-white"
+          labelClassName="text-[#FFF2E3]"
         />
 
         <TextField
@@ -55,18 +53,18 @@ export default function LoginForm() {
           name="password"
           required
           type="password"
-          className="form-input"
+          className="bg-transparent text-white border border-[#444] placeholder-white"
           placeholder="Enter your password"
-          icon={<LockOutlined className="form-icon" />}
+          icon={<LockOutlined className="text-[#FFF2E3]" />}
+          labelClassName="text-[#FFF2E3]"
         />
-        <ErrorAlert error={error} />
-        <div className="password-label-row">
-          <a className="forgot-link" href="#" style={{ fontSize: 13, color: '#FFF2E3' }}>
+        <div className="flex justify-end w-full mt-2">
+          <a href="#" className="underline font-medium text-[#FFF2E3] !text-[#FFF2E3]">
             Forgot password ?
           </a>
         </div>
         <Form.Item>
-          <Button htmlType="submit" className="login-btn" block size="large">
+          <Button htmlType="submit" block size="large" className="mt-5 bg-[#635d57] text-[#FFF2E3] border-none shadow-none font-large">
             Sign in
           </Button>
         </Form.Item>

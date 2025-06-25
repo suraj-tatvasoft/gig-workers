@@ -23,6 +23,7 @@ const ErrorAlert: React.FC<ErrorAlertProps> = ({ error, style }) => {
         backgroundColor: '#fff1f0',
         borderColor: '#ffa39e',
         fontSize: 14,
+        marginBottom: 16,
         ...style,
       }}
     />

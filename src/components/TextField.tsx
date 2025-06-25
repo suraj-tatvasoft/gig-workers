@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Form, Input } from 'antd';
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
 interface TextFieldProps {
   label: string;
@@ -12,6 +13,8 @@ interface TextFieldProps {
   icon?: React.ReactNode;
   size?: 'large' | 'middle' | 'small';
   className?: string;
+  labelClassName?: string;
+  style?: React.CSSProperties;
 }
 
 const TextField: React.FC<TextFieldProps> = ({
@@ -22,20 +25,70 @@ const TextField: React.FC<TextFieldProps> = ({
   type = 'text',
   icon,
   size = 'large',
-  className = 'form-input',
+  className = '',
+  labelClassName = '',
+  style = {},
 }) => {
   const InputComponent = type === 'password' ? Input.Password : Input;
 
   return (
     <Form.Item
-      label={
-        <span className="input-label">
-          {label} {required && <span className="require-mark">*</span>}
-        </span>
-      }
       name={name}
+      rules={[{ required, message: `${label} is required` }]}
+      className="mb-4"
     >
-      <InputComponent prefix={icon} placeholder={placeholder} size={size} className={className} />
+      <div>
+        {label && (
+          <label htmlFor={name} className={`block mb-1 font-medium ${labelClassName}`}>
+            {label}
+            {required && <span className="text-red-500 ml-1">*</span>}
+          </label>
+        )}
+        {type === 'password' ? (
+          <Input.Password
+            id={name}
+            name={name}
+            prefix={icon}
+            placeholder={placeholder}
+            size={size}
+            className={className}
+            style={{
+              background: 'transparent',
+              color: '#FFF2E3',
+              ...style,
+            }}
+            rootClassName="custom-ant-input"
+            iconRender={visible =>
+              visible ? (
+                <EyeTwoTone twoToneColor="#FFF2E3" />
+              ) : (
+                <EyeInvisibleOutlined style={{ color: '#FFF2E3' }} />
+              )
+            }
+          />
+        ) : (
+          <InputComponent
+            id={name}
+            name={name}
+            prefix={icon}
+            placeholder={placeholder}
+            size={size}
+            className={className}
+            style={{
+              background: 'transparent',
+              color: '#FFF2E3',
+              ...style,
+            }}
+            rootClassName="custom-ant-input"
+          />
+        )}
+        <style jsx global>{`
+          .custom-ant-input input::placeholder {
+            color: #FFF2E3 !important;
+            opacity: 1;
+          }
+        `}</style>
+      </div>
     </Form.Item>
   );
 };
