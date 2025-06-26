@@ -6,11 +6,13 @@ import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import TextField from '@/components/TextField';
 import { loginSchema } from '../../../schemas/auth';
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const { Title } = Typography;
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
@@ -23,7 +25,7 @@ export default function LoginForm() {
       });
 
       if (result?.ok) {
-        alert('done')
+        router.push('/dashboard');
       } else {
         console.log('Login failed');
         setError('Invalid email or password');
