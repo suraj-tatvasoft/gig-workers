@@ -5,54 +5,17 @@ import { useRouter } from 'next/navigation';
 import { Form, Button, Typography } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import TextField from '@/components/TextField';
-import { loginSchema } from '@/schemas/auth';
-import api from '@/services/api';
-import { ADMIN_LOGIN_API_ENDPOINT } from '@/services/endpoints/admin';
-import { toast } from 'react-toastify';
+import { handleAdminLogin } from '@/controllers/AdminLoginController';
 
 const { Title } = Typography;
 
 export default function AdminLoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [form] = Form.useForm();
-
   const router = useRouter();
 
-  const handleSubmit = async (values: { email: string; password: string }) => {
-    try {
-      setError(null);
-      await loginSchema.validate(values, { abortEarly: false });
-      const response = await api.post(ADMIN_LOGIN_API_ENDPOINT, values);
-      if (response.status === 200 && response.data?.token) {
-        form.resetFields();
-        toast.success('Login successful!');
-
-        localStorage.setItem('authToken', response.data.token);
-        localStorage.setItem('adminAuthToken', response.data.token);
-        localStorage.setItem('admin_profile', response.data.admin);
-
-        router.push('/admin/dashboard');
-      } else {
-        toast.error('Unexpected response from server.');
-      }
-    } catch (err: any) {
-      if (err.name === 'ValidationError' && err.inner) {
-        const formErrors = err.inner.reduce((acc: any, curr: any) => {
-          acc[curr.path] = curr.message;
-          return acc;
-        }, {});
-        form.setFields(
-          Object.entries(formErrors).map(([name, message]) => ({
-            name,
-            errors: [message as string],
-          })),
-        );
-      } else {
-        const errorMessage = err?.response?.data?.message || err?.message || 'Something went wrong.';
-        setError(errorMessage);
-        toast.error(errorMessage);
-      }
-    }
+  const onFinish = (values: { email: string; password: string }) => {
+    handleAdminLogin(values, form, router, setError);
   };
 
   return (
@@ -63,7 +26,7 @@ export default function AdminLoginForm() {
       <Form
         form={form}
         name="login"
-        onFinish={handleSubmit}
+        onFinish={onFinish}
         layout="vertical"
         className="w-full"
         initialValues={{ email: '', password: '' }}
