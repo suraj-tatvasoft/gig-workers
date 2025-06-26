@@ -1,15 +1,15 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import GoogleProvider from "next-auth/providers/google";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-export const authOptions = {
-  adapter: PrismaAdapter(prisma),
+export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60,
   },
   providers: [
     CredentialsProvider({
@@ -19,37 +19,114 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials?.email },
+          where: { email: credentials.email },
         });
 
         if (!user || !user.password) return null;
 
-        const valid = await bcrypt.compare(credentials.password!, user.password);
+        const valid = await bcrypt.compare(credentials.password, user.password);
         if (!valid) return null;
 
         return {
-          id: user.id,
+          id: String(user.id),
           email: user.email,
-          first_name: user.first_name,
+          first_name: user.first_name || "",
+          last_name: user.last_name || "",
+          profile_url: user.profile_url || "",
           role: user.role,
+          sign_up_type: user.sign_up_type || "email",
+          is_verified: user.is_verified ?? false,
+        };
+      },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      profile(profile) {
+        const [firstName, ...rest] = (profile.name || "").split(" ");
+        const lastName = rest.join(" ") || "";
+
+        return {
+          id: profile.sub,
+          email: profile.email,
+          first_name: firstName,
+          last_name: lastName,
+          profile_url: profile.picture,
+          role: "user",
+          is_verified: true,
+          sign_up_type: "google",
         };
       },
     }),
   ],
+
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account, profile }) {
       if (user) {
-        token.role = user.role;
         token.id = user.id;
+        token.email = user.email;
+        token.role = (user as any).role || "user";
+
+        // If Google login
+        if (account?.provider === "google" && user.email) {
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email },
+            select :{
+              id:true,
+              role:true,
+              created_at:true,
+              updated_at:true
+            }
+          });
+          console.log('1111', existingUser)
+          if (!existingUser) {
+            const newUser = await prisma.user.create({
+              data: {
+                email: user.email,
+                first_name: (user as any).first_name,
+                last_name: (user as any).last_name,
+                profile_url: (user as any).profile_url,
+                sign_up_type: "google",
+                is_verified: true,
+                role: "user"
+              },
+            });
+        
+            token.id = String(newUser.id);
+            token.role = newUser.role;
+          } else {
+            token.id = String(existingUser.id);
+            token.role = existingUser.role;
+          }
+        }
+
+        token.iat = Math.floor(Date.now() / 1000);
+        token.exp = Math.floor(Date.now() / 1000) + 60 * 60;
       }
+
       return token;
     },
+
     async session({ session, token }) {
-      session.user.role = token.role;
+      if (session.user) {
       session.user.id = token.id;
+      session.user.role = token.role;
+      session.expires = new Date(token.exp * 1000).toISOString();
+      }
       return session;
     },
+  },
+
+  jwt: {
+    maxAge: 60 * 60,
+  },
+  pages: {
+    signIn: "/auth/login",       // Optional: custom login route
+    error: "/auth/login",        // Redirect error to /login
+    newUser: "/dashboard",  // First-time Google login → /dashboard
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

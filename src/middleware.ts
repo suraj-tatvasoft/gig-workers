@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { HttpStatusCode } from './lib/enum';
 
 const protectedRoutes = ['/api/protected', '/api/test/private', '/dashboard', '/profile']; // Add more as needed
 
@@ -23,14 +24,14 @@ export async function middleware(req: NextRequest) {
   if (!token) {
     return NextResponse.json(
       { message: 'Unauthorized: Token missing or expired' },
-      { status: 401 }
+      { status: HttpStatusCode.UNAUTHORIZED }
     );
   }
 
   // Optional: Check for manual token expiration
   const now = Math.floor(Date.now() / 1000);
   if (token.exp && token.exp < now) {
-    return NextResponse.json({ message: 'Token expired' }, { status: 401 });
+    return NextResponse.json({ message: 'Token expired' }, { status: HttpStatusCode.UNAUTHORIZED });
   }
 
   // Forward token info to route handlers (optional)

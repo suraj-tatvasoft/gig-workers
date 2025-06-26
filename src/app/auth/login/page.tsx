@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Images } from '@/lib/images';
 import LoginForm from './LoginForm';
+import { signIn } from 'next-auth/react';
 
 export default function LoginPage() {
   return (
@@ -16,7 +17,7 @@ export default function LoginPage() {
         </div>
         <LoginForm />
         <div className="text-[#FFF2E3] mt-6 mb-3 text-center text-sm">or sign in using</div>
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center mb-4" onClick={() => signIn("google", { callbackUrl: "/dashboard" })}>
           <Image src={Images.googleIcon} alt="Google Icon" width={36} height={36} className="cursor-pointer" unoptimized />
         </div>
         <div className="text-center text-[#FFF2E3] text-sm">
