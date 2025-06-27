@@ -7,7 +7,7 @@ import TextField from '@/components/TextField';
 import { forgotPasswordSchema } from '../../../schemas/auth';
 import { useRouter } from 'next/navigation';
 import { BackArrowIconSvg } from '@/components/icons';
-import { SIGNUP_PAGE_PATH, USER_LOGIN_PAGE_PATH } from '@/lib/utils/frontend_redirection_paths';
+import { SIGNUP_PAGE_PATH, USER_LOGIN_PAGE_PATH } from '@/lib/constants/app-routes';
 
 export default function ForgotPasswordForm() {
   const router = useRouter();

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { FacebookIconSvg, InstagramIconSvg, LinkedInIconSvg, TwitterIconSvg } from './icons';
 import Image from 'next/image';
 import { Images } from '@/lib/images';
-import { ABOUT_PAGE_PATH } from '@/lib/utils/frontend_redirection_paths';
+import { ABOUT_PAGE_PATH } from '@/lib/constants/app-routes';
 
 function Footer() {
   return (

@@ -7,7 +7,7 @@ import TextField from '@/components/TextField';
 import { loginSchema } from '../../../schemas/auth';
 import { useRouter } from 'next/navigation';
 import { Images } from '@/lib/images';
-import { FORGOT_PASSWORD_PAGE_PATH, SIGNUP_PAGE_PATH } from '@/lib/utils/frontend_redirection_paths';
+import { FORGOT_PASSWORD_PAGE_PATH, SIGNUP_PAGE_PATH } from '@/lib/constants/app-routes';
 
 const { Title } = Typography;
 

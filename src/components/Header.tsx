@@ -1,6 +1,6 @@
 import { SearchIconSvg } from '@/components/icons';
 import { Images } from '@/lib/images';
-import { SIGNUP_PAGE_PATH, USER_LOGIN_PAGE_PATH } from '@/lib/utils/frontend_redirection_paths';
+import { SIGNUP_PAGE_PATH, USER_LOGIN_PAGE_PATH } from '@/lib/constants/app-routes';
 import Image from 'next/image';
 import Link from 'next/link';
 
