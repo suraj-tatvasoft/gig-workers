@@ -2,7 +2,7 @@ import { FormInstance } from 'antd';
 import { toast } from 'react-toastify';
 import { loginSchema } from '@/schemas/auth';
 import api from '@/services/api';
-import { ADMIN_LOGIN_API_ENDPOINT } from '@/services/endpoints/admin';
+import { ADMIN_LOGIN_API_ENDPOINT } from '@/lib/config/endpoints/admin';
 
 type LoginValues = { email: string; password: string };
 
