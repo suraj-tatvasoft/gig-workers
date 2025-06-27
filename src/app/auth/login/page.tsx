@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Images } from '@/lib/images';
 import LoginForm from './LoginForm';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function LoginPage() {
   return (
@@ -22,9 +23,9 @@ export default function LoginPage() {
         </div>
         <div className="text-center text-[#FFF2E3] text-sm">
           Don&apos;t have an account?{' '}
-          <a href="/auth/signup" className="font-medium underline text-[#FFF2E3]">
+          <Link href="/auth/signup" className="font-medium underline text-[#FFF2E3]">
             Sign up
-          </a>
+          </Link>
         </div>
       </div>
     </div>

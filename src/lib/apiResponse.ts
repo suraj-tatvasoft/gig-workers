@@ -1,4 +1,3 @@
-// lib/apiResponse.ts
 import { NextResponse } from 'next/server';
 
 type ApiResponseParams<T> = {

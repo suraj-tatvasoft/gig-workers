@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60,
+    maxAge: 60 * 60 * 24,
   },
   providers: [
     CredentialsProvider({
@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -74,14 +74,7 @@ export const authOptions: NextAuthOptions = {
         if (account?.provider === "google" && user.email) {
           const existingUser = await prisma.user.findUnique({
             where: { email: user.email },
-            select :{
-              id:true,
-              role:true,
-              created_at:true,
-              updated_at:true
-            }
           });
-          console.log('1111', existingUser)
           if (!existingUser) {
             const newUser = await prisma.user.create({
               data: {
@@ -104,7 +97,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         token.iat = Math.floor(Date.now() / 1000);
-        token.exp = Math.floor(Date.now() / 1000) + 60 * 60;
+        token.exp = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
       }
 
       return token;
@@ -121,12 +114,12 @@ export const authOptions: NextAuthOptions = {
   },
 
   jwt: {
-    maxAge: 60 * 60,
+    maxAge: 60 * 60 * 24,
   },
   pages: {
-    signIn: "/auth/login",       // Optional: custom login route
-    error: "/auth/login",        // Redirect error to /login
-    newUser: "/dashboard",  // First-time Google login → /dashboard
+    signIn: "/auth/login",
+    error: "/auth/login",
+    newUser: "/dashboard",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
