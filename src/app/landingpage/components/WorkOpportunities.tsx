@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import { workOpportunities } from '@/lib/constants/Home';
+import { workOpportunities } from '@/constants/LandingPage';
 import { Images } from '@/lib/images';
 import Image from 'next/image';
 
