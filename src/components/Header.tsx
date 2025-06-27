@@ -1,5 +1,6 @@
 import { SearchIconSvg } from '@/components/icons';
 import { Images } from '@/lib/images';
+import { SIGNUP_PAGE_PATH, USER_LOGIN_PAGE_PATH } from '@/lib/utils/frontend_redirection_paths';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -29,10 +30,10 @@ function Header() {
           <Link href="#" className="text-[#FFF2E3] text-base">
             Contracts
           </Link>
-          <Link href="/auth/login" className="text-[#FFF2E3] text-base">
+          <Link href={USER_LOGIN_PAGE_PATH} className="text-[#FFF2E3] text-base">
             Login
           </Link>
-          <Link href="/auth/signup" className="text-[#FFF2E3] text-base">
+          <Link href={SIGNUP_PAGE_PATH} className="text-[#FFF2E3] text-base">
             Signup
           </Link>
         </nav>
