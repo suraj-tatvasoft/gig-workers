@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Images } from '@/lib/images';
 import SignupForm from './SignupForm';
+import Link from 'next/link';
 
 const Signup = () => {
   return (
@@ -20,9 +21,9 @@ const Signup = () => {
         </div>
         <div className="text-center text-[#fff2e3]">
           Already have an account?{' '}
-          <a className="font-medium text-[#fff2e3] underline" href="/auth/login">
+          <Link className="font-medium text-[#fff2e3] underline" href="/auth/login">
             Log In
-          </a>
+          </Link>
         </div>
       </div>
     </div>

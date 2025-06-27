@@ -5,6 +5,7 @@ import { Form, Button, Typography } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import TextField from '@/components/TextField';
 import { loginSchema } from '../../../schemas/auth';
+import Link from 'next/link';
 
 const { Title } = Typography;
 
@@ -59,9 +60,9 @@ export default function LoginForm() {
           labelClassName="text-[#FFF2E3]"
         />
         <div className="flex justify-end w-full mt-2">
-          <a href="#" className="underline font-medium text-[#FFF2E3] !text-[#FFF2E3]">
+          <Link href="#" className="underline font-medium text-[#FFF2E3] !text-[#FFF2E3]">
             Forgot password ?
-          </a>
+          </Link>
         </div>
         <Form.Item>
           <Button htmlType="submit" block size="large" className="mt-5 bg-[#635d57] text-[#FFF2E3] border-none shadow-none font-large">
