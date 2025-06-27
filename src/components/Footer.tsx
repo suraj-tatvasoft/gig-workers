@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { FacebookIconSvg, InstagramIconSvg, LinkedInIconSvg, TwitterIconSvg } from './icons';
-import { dm_serif_display } from '@/lib/fonts';
 import Image from 'next/image';
 import { Images } from '@/lib/images';
 
@@ -24,7 +23,6 @@ function Footer() {
           <h2
             className="bg-clip-text text-transparent font-semibold italic text-sm"
             style={{
-              ...dm_serif_display.style,
               backgroundImage:
                 'linear-gradient(271.26deg, #A8E5EC -32.48%, #1CBAE0 -6.29%, #6C98EE 19.89%, #AB9EF5 55.1%, #CF8CCC 88.51%, #FFB9C7 111.09%, #FFC29F 140.88%)',
             }}
@@ -51,7 +49,6 @@ function Footer() {
           <h2
             className="bg-clip-text text-transparent font-semibold italic text-sm"
             style={{
-              ...dm_serif_display.style,
               backgroundImage:
                 'linear-gradient(271.26deg, #A8E5EC -32.48%, #1CBAE0 -6.29%, #6C98EE 19.89%, #AB9EF5 55.1%, #CF8CCC 88.51%, #FFB9C7 111.09%, #FFC29F 140.88%)',
             }}
