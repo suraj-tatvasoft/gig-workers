@@ -7,6 +7,7 @@ import TextField from '@/components/TextField';
 import { verifyOtpSchema } from '../../../schemas/auth';
 import { useRouter } from 'next/navigation';
 import { BackArrowIconSvg } from '@/components/icons';
+import { FORGOT_PASSWORD_PAGE_PATH } from '@/lib/utils/frontend_redirection_paths';
 
 export default function VerifyOtpForm() {
   const router = useRouter();
@@ -56,7 +57,7 @@ export default function VerifyOtpForm() {
       <Title level={3} className="relative flex items-center justify-center text-center mb-6 !text-2xl w-full">
         <button
           type="button"
-          onClick={() => router.push('/auth/forgot-password')}
+          onClick={() => router.push(FORGOT_PASSWORD_PAGE_PATH)}
           className="absolute left-0 focus:outline-none bg-transparent border-none p-0 cursor-pointer"
           aria-label="Back to login"
         >

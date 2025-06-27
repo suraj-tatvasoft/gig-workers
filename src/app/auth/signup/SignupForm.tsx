@@ -7,6 +7,7 @@ import { signupSchema } from '../../../schemas/auth';
 import TextField from '@/components/TextField';
 import { Images } from '@/lib/images';
 import { useRouter } from 'next/navigation';
+import { USER_LOGIN_PAGE_PATH } from '@/lib/utils/frontend_redirection_paths';
 
 const { Title } = Typography;
 interface SignupFormValues {
@@ -100,7 +101,7 @@ export default function SignupForm() {
             required
             type="password"
             placeholder="Enter your password"
-            icon={<LockOutlined className="text-[#FFF2E3] !text-[#FFF2E3]" />}
+            icon={<LockOutlined className="!text-[#FFF2E3]" />}
             className="bg-transparent text-white border border-[#444] placeholder-white"
             labelClassName="text-[#FFF2E3]"
           />
@@ -111,16 +112,16 @@ export default function SignupForm() {
             required
             type="password"
             placeholder="Enter Confirm password"
-            icon={<LockOutlined className="text-[#FFF2E3] !text-[#FFF2E3]" />}
+            icon={<LockOutlined className=" !text-[#FFF2E3]" />}
             className="bg-transparent text-white border border-[#444] placeholder-white"
             labelClassName="text-[#FFF2E3]"
           />
 
           <Form.Item name="terms" valuePropName="checked" rules={[{ required: true, message: 'You must accept the terms and conditions' }]}>
             <Checkbox>
-              <span className="text-[#FFF2E3] !text-[#FFF2E3]">
+              <span className="!text-[#FFF2E3]">
                 Accept{' '}
-                <a href="#" className="underline font-medium text-[#FFF2E3] !text-[#FFF2E3]">
+                <a href="#" className="underline font-medium !text-[#FFF2E3]">
                   terms & conditions
                 </a>
               </span>
@@ -136,7 +137,7 @@ export default function SignupForm() {
         </div>
         <div className="text-center text-[#fff2e3]">
           Already have an account?{' '}
-          <a className="font-medium text-[#fff2e3] underline" onClick={() => router.push('/auth/login')}>
+          <a className="font-medium text-[#fff2e3] underline" onClick={() => router.push(USER_LOGIN_PAGE_PATH)}>
             Log In
           </a>
         </div>
