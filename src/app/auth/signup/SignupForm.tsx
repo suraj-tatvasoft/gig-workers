@@ -7,7 +7,7 @@ import { signupSchema } from '../../../schemas/auth';
 import TextField from '@/components/TextField';
 import { Images } from '@/lib/images';
 import { useRouter } from 'next/navigation';
-import { USER_LOGIN_PAGE_PATH } from '@/lib/constants/app-routes';
+import { USER_LOGIN_PAGE_PATH } from '@/constants/app-routes';
 
 const { Title } = Typography;
 interface SignupFormValues {

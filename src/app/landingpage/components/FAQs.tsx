@@ -1,5 +1,5 @@
 'use client';
-import { faqs } from '@/lib/constants/Home';
+import { faqs } from '@/constants/LandingPage';
 import { useState } from 'react';
 
 function FAQs() {

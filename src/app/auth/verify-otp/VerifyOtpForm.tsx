@@ -7,7 +7,7 @@ import TextField from '@/components/TextField';
 import { verifyOtpSchema } from '../../../schemas/auth';
 import { useRouter } from 'next/navigation';
 import { BackArrowIconSvg } from '@/components/icons';
-import { FORGOT_PASSWORD_PAGE_PATH } from '@/lib/constants/app-routes';
+import { FORGOT_PASSWORD_PAGE_PATH } from '@/constants/app-routes';
 
 export default function VerifyOtpForm() {
   const router = useRouter();
