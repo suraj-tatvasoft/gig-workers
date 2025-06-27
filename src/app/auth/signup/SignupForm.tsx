@@ -1,11 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Form, Button, Typography, Checkbox } from 'antd';
+import { Form, Button, Typography, Checkbox, Image } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { signupSchema } from '../../../schemas/auth';
 import TextField from '@/components/TextField';
 import Link from 'next/link';
+import { Images } from '@/lib/images';
+import { useRouter } from 'next/navigation';
+import { USER_LOGIN_PAGE_PATH } from '@/constants/app-routes';
 
 const { Title } = Typography;
 interface SignupFormValues {
@@ -20,11 +23,11 @@ interface SignupFormValues {
 export default function SignupForm() {
   const [form] = Form.useForm();
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter();
   const handleSubmit = async (values: SignupFormValues) => {
     try {
-      await signupSchema.validate(values, { abortEarly: false });
       setError(null);
+      await signupSchema.validate(values, { abortEarly: false });
     } catch (err: any) {
       if (err.name === 'ValidationError') {
         const fieldErrors = err.inner.map((e: any) => ({
@@ -43,7 +46,7 @@ export default function SignupForm() {
       <Title level={3} className="text-center mb-6 !text-2xl">
         <span className="text-[#FFF2E3]">Join Us</span>
       </Title>
-      <div className="w-full max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="w-full">
         <Form
           form={form}
           name="signup"
@@ -62,7 +65,7 @@ export default function SignupForm() {
         >
           <TextField
             name="firstname"
-            label="Firstname"
+            label="First name"
             required
             type="text"
             placeholder="Enter your firstname"
@@ -73,7 +76,7 @@ export default function SignupForm() {
 
           <TextField
             name="lastname"
-            label="Lastname"
+            label="Last name"
             required
             type="text"
             placeholder="Enter your lastname"
@@ -99,7 +102,7 @@ export default function SignupForm() {
             required
             type="password"
             placeholder="Enter your password"
-            icon={<LockOutlined className="text-[#FFF2E3] !text-[#FFF2E3]" />}
+            icon={<LockOutlined className="!text-[#FFF2E3]" />}
             className="bg-transparent text-white border border-[#444] placeholder-white"
             labelClassName="text-[#FFF2E3]"
           />
@@ -110,16 +113,16 @@ export default function SignupForm() {
             required
             type="password"
             placeholder="Enter Confirm password"
-            icon={<LockOutlined className="text-[#FFF2E3] !text-[#FFF2E3]" />}
+            icon={<LockOutlined className=" !text-[#FFF2E3]" />}
             className="bg-transparent text-white border border-[#444] placeholder-white"
             labelClassName="text-[#FFF2E3]"
           />
 
           <Form.Item name="terms" valuePropName="checked" rules={[{ required: true, message: 'You must accept the terms and conditions' }]}>
             <Checkbox>
-              <span className="text-[#FFF2E3] !text-[#FFF2E3]">
+              <span className="!text-[#FFF2E3]">
                 Accept{' '}
-                <Link href="#" className="underline font-medium text-[#FFF2E3] !text-[#FFF2E3]">
+                <Link href="#" className="underline font-medium !text-[#FFF2E3]">
                   terms & conditions
                 </Link>
               </span>
@@ -129,6 +132,16 @@ export default function SignupForm() {
             Sign up
           </Button>
         </Form>
+        <div className="text-center text-[#fff2e3] mt-6 mb-3">or sign in using</div>
+        <div className="flex justify-center mb-4">
+          <Image src={Images.googleIcon} alt="Google Icon" width={24} height={24} />
+        </div>
+        <div className="text-center text-[#fff2e3]">
+          Already have an account?{' '}
+          <a className="font-medium text-[#fff2e3] underline cursor-pointer" onClick={() => router.push(USER_LOGIN_PAGE_PATH)}>
+            Log In
+          </a>
+        </div>
       </div>
     </>
   );
