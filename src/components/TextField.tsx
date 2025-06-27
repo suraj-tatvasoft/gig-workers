@@ -32,7 +32,7 @@ const TextField: React.FC<TextFieldProps> = ({
   const InputComponent = type === 'password' ? Input.Password : Input;
 
   return (
-    <Form.Item name={name} rules={[{ required, message: `${label} is required` }]} className="mb-4">
+    <Form.Item name={name} rules={[{ required, message: `${label || name} is required` }]} className="mb-4">
       <div>
         {label && (
           <label htmlFor={name} className={`block mb-1 font-medium ${labelClassName}`}>
