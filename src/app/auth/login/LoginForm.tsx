@@ -18,11 +18,21 @@ export default function LoginForm() {
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
-      await loginSchema.validate(values);
       setError(null);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
+      await loginSchema.validate(values, { abortEarly: false });
+    } catch (err: any) {
+      if (err.name === 'ValidationError') {
+        const formErrors = err.inner.reduce((acc: any, curr: any) => {
+          acc[curr.path] = curr.message;
+          return acc;
+        }, {});
+
+        form.setFields(
+          Object.entries(formErrors).map(([name, message]) => ({
+            name,
+            errors: [message as string],
+          })),
+        );
       } else {
         setError('Something went wrong');
       }
@@ -42,6 +52,9 @@ export default function LoginForm() {
         className="w-full"
         initialValues={{ email: '', password: '' }}
         requiredMark={false}
+        onFieldsChange={() => {
+          if (error) setError('');
+        }}
       >
         <TextField
           name="email"

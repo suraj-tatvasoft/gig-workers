@@ -17,8 +17,8 @@ export default function ForgotPasswordForm() {
 
   const handleSubmit = async (values: { email: string }) => {
     try {
-      await forgotPasswordSchema.validate(values, { abortEarly: false });
       setError(null);
+      await forgotPasswordSchema.validate(values, { abortEarly: false });
     } catch (err: any) {
       if (err.name === 'ValidationError') {
         const fieldErrors = err.inner.map((e: any) => ({

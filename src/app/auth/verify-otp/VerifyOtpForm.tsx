@@ -19,8 +19,8 @@ export default function VerifyOtpForm() {
 
   const handleSubmit = async (values: { email: string }) => {
     try {
-      await verifyOtpSchema.validate(values, { abortEarly: false });
       setError(null);
+      await verifyOtpSchema.validate(values, { abortEarly: false });
     } catch (err: any) {
       if (err.name === 'ValidationError') {
         const fieldErrors = err.inner.map((e: any) => ({

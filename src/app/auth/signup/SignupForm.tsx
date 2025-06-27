@@ -25,8 +25,8 @@ export default function SignupForm() {
   const router = useRouter();
   const handleSubmit = async (values: SignupFormValues) => {
     try {
-      await signupSchema.validate(values, { abortEarly: false });
       setError(null);
+      await signupSchema.validate(values, { abortEarly: false });
     } catch (err: any) {
       if (err.name === 'ValidationError') {
         const fieldErrors = err.inner.map((e: any) => ({
@@ -64,7 +64,7 @@ export default function SignupForm() {
         >
           <TextField
             name="firstname"
-            label="Firstname"
+            label="First name"
             required
             type="text"
             placeholder="Enter your firstname"
@@ -75,7 +75,7 @@ export default function SignupForm() {
 
           <TextField
             name="lastname"
-            label="Lastname"
+            label="Last name"
             required
             type="text"
             placeholder="Enter your lastname"
@@ -137,7 +137,7 @@ export default function SignupForm() {
         </div>
         <div className="text-center text-[#fff2e3]">
           Already have an account?{' '}
-          <a className="font-medium text-[#fff2e3] underline" onClick={() => router.push(USER_LOGIN_PAGE_PATH)}>
+          <a className="font-medium text-[#fff2e3] underline cursor-pointer" onClick={() => router.push(USER_LOGIN_PAGE_PATH)}>
             Log In
           </a>
         </div>
