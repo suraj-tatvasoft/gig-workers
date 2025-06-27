@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { FacebookIconSvg, InstagramIconSvg, LinkedInIconSvg, TwitterIconSvg } from './icons';
 import Image from 'next/image';
 import { Images } from '@/lib/images';
+import { ABOUT_PAGE_PATH } from '@/constants/app-routes';
 
 function Footer() {
   return (
@@ -75,7 +76,7 @@ function Footer() {
           <Link href="#" className="font-inter">
             Community
           </Link>
-          <Link href="/about" className="font-inter">
+          <Link href={ABOUT_PAGE_PATH} className="font-inter">
             About us
           </Link>
           <Link href="#" className="font-inter">

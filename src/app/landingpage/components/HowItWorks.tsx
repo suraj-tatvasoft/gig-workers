@@ -1,5 +1,5 @@
 import { DoubleDotIconSvg } from '@/components/icons';
-import { steps } from '@/lib/constants/Home';
+import { steps } from '@/constants/LandingPage';
 import { Images } from '@/lib/images';
 import Image from 'next/image';
 

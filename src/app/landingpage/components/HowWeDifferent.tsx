@@ -5,9 +5,7 @@ function HowWeDifferent() {
   return (
     <section className="w-full px-10 py-16 text-center">
       <div className="max-w-[1920px] mx-auto">
-        <h2 className="text-2xl mb-3 font-bold">
-          How are we Different?
-        </h2>
+        <h2 className="text-2xl mb-3 font-bold">How are we Different?</h2>
         <div className="font-[500] mb-6 text-[#C7C7C7] text-sm">
           Why Us? Explore What Makes Our Design Platform Stand Out & Elevate Your Experience.
         </div>

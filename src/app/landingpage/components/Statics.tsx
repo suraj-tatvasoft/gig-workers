@@ -1,4 +1,4 @@
-import { stats } from '@/lib/constants/Home';
+import { stats } from '@/constants/LandingPage';
 import React from 'react';
 
 function Statics() {
