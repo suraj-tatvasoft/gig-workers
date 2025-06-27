@@ -6,6 +6,7 @@ import { LeftOutlined, MailOutlined } from '@ant-design/icons';
 import TextField from '@/components/TextField';
 import { forgotPasswordSchema } from '../../../schemas/auth';
 import { useRouter } from 'next/navigation';
+import { BackArrowIconSvg } from '@/components/icons';
 
 export default function ForgotPasswordForm() {
   const router = useRouter();
@@ -32,33 +33,31 @@ export default function ForgotPasswordForm() {
 
   return (
     <>
-      <Title level={3} className="text-center mb-6 !text-2xl">
+      <Title level={3} className="relative flex items-center justify-center text-center mb-6 !text-2xl w-full">
         <button
           type="button"
           onClick={() => router.push('/auth/login')}
-          className="mr-2 focus:outline-none bg-transparent border-none p-0"
+          className="absolute left-0 focus:outline-none bg-transparent border-none p-0 cursor-pointer"
           aria-label="Back to login"
         >
-          <LeftOutlined className="cursor-pointer" style={{ color: '#FFF2E3' }} />
+          <BackArrowIconSvg />
         </button>
         <span className="text-[#FFF2E3]">Forgot password</span>
       </Title>
       <span className="text-[#9d9893] mb-6 text-center">No worries, we’ll send you an OTP to your mail id</span>
       <Form name="email" onFinish={handleSubmit} form={form} layout="vertical" className="w-full" initialValues={{ email: '' }} requiredMark={false}>
-        <Form.Item name="email">
-          <TextField
-            name="email"
-            label="Email"
-            required
-            type="text"
-            placeholder="Enter your email"
-            icon={<MailOutlined className="text-[#FFF2E3]" />}
-            className="bg-transparent text-white border border-[#444] placeholder-white"
-            labelClassName="text-[#FFF2E3]"
-          />
-        </Form.Item>
+        <TextField
+          name="email"
+          label="Email"
+          required
+          type="text"
+          placeholder="Enter your email"
+          icon={<MailOutlined className="text-[#FFF2E3]" />}
+          className="bg-transparent text-white border border-[#444] placeholder-white"
+          labelClassName="text-[#FFF2E3]"
+        />
         <Form.Item>
-          <Button htmlType="submit" block size="large" className="bg-[#635d57] text-[#FFF2E3] border-none shadow-none font-large">
+          <Button htmlType="submit" block size="large" className="bg-[#635d57] text-[#FFF2E3] border-none shadow-none font-large mt-2">
             Confirm
           </Button>
         </Form.Item>

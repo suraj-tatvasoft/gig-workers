@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { Form, Button, Typography } from 'antd';
-import { LeftOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { LockOutlined } from '@ant-design/icons';
 import TextField from '@/components/TextField';
 import { verifyOtpSchema } from '../../../schemas/auth';
 import { useRouter } from 'next/navigation';
+import { BackArrowIconSvg } from '@/components/icons';
 
 export default function VerifyOtpForm() {
   const router = useRouter();
@@ -52,34 +53,34 @@ export default function VerifyOtpForm() {
 
   return (
     <>
-      <Title level={3} className="text-center mb-6 !text-2xl">
+      <Title level={3} className="relative flex items-center justify-center text-center mb-6 !text-2xl w-full">
         <button
           type="button"
           onClick={() => router.push('/auth/forgot-password')}
-          className="mr-2 focus:outline-none bg-transparent border-none p-0"
+          className="absolute left-0 focus:outline-none bg-transparent border-none p-0 cursor-pointer"
           aria-label="Back to login"
         >
-          <LeftOutlined className="cursor-pointer" style={{ color: '#FFF2E3' }} />
+          <BackArrowIconSvg />
         </button>
         <span className="text-[#FFF2E3]">Verify OTP</span>
       </Title>
-      <span className="text-[#9d9893] mb-6 text-center">Kindly enter the confirmation code sent to the following email: xyz@gmail.com</span>
-      <Form name="otp" onFinish={handleSubmit} form={form} layout="vertical" className="w-full" initialValues={{ otp: '' }} requiredMark={false}>
-        <Form.Item name="otp" className="mb-4">
-          <div className="flex justify-between items-center mb-1">
-            <label htmlFor="otp" className="font-medium text-[#FFF2E3]">
-              OTP <span className="text-red-500">*</span>
-            </label>
-            <span className="text-sm">
-              {canResend ? (
-                <Button type="link" className="p-0 m-0 text-[#FFF2E3] underline font-medium" onClick={handleResend} disabled={!canResend}>
-                  Resend OTP
-                </Button>
-              ) : (
-                <span className="text-[#9d9893]">Resend OTP in {timer}s</span>
-              )}
-            </span>
-          </div>
+      <span className="text-[#9d9893] mb-6 text-center block">Kindly enter the confirmation code sent to the following email: xyz@gmail.com</span>
+      <Form form={form} name="otp" onFinish={handleSubmit} layout="vertical" className="w-full" requiredMark={false}>
+        <div className="flex justify-between items-center mb-1">
+          <label htmlFor="otp" className="font-medium text-[#FFF2E3]">
+            OTP <span className="text-red-500">*</span>
+          </label>
+          <span className="text-sm">
+            {canResend ? (
+              <Button type="link" className="p-0 m-0 !text-[#FFF2E3] font-medium" onClick={handleResend}>
+                Resend OTP
+              </Button>
+            ) : (
+              <span className="text-[#9d9893]">Resend OTP in {timer}s</span>
+            )}
+          </span>
+        </div>
+        <Form.Item>
           <TextField
             name="otp"
             required
@@ -91,7 +92,7 @@ export default function VerifyOtpForm() {
           />
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit" block size="large" className="bg-[#635d57] text-[#FFF2E3] border-none shadow-none font-large">
+          <Button htmlType="submit" block size="large" className="bg-[#635d57] text-[#FFF2E3] border-none shadow-none font-large mt-2">
             Submit
           </Button>
         </Form.Item>
