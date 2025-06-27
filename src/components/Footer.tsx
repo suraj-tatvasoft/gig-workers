@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { FacebookIconSvg, InstagramIconSvg, LinkedInIconSvg, TwitterIconSvg } from './icons';
 import Image from 'next/image';
 import { Images } from '@/lib/images';
-import { ABOUT_PAGE_PATH } from '@/constants/app-routes';
+import { ABOUT_PAGE_PATH, FACEBOOK_PROFILE_PATH, INSTAGRAM_PROFILE_PATH, LINKEDIN_PROFILE_PATH, TWITTER_PROFILE_PATH } from '@/constants/app-routes';
 
 function Footer() {
   return (
@@ -112,16 +112,16 @@ function Footer() {
         </div>
 
         <div className="flex space-x-4 mt-4 md:mt-0">
-          <Link href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
+          <Link href={LINKEDIN_PROFILE_PATH} target="_blank" rel="noopener noreferrer">
             <LinkedInIconSvg />
           </Link>
-          <Link href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+          <Link href={INSTAGRAM_PROFILE_PATH} target="_blank" rel="noopener noreferrer">
             <InstagramIconSvg />
           </Link>
-          <Link href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
+          <Link href={TWITTER_PROFILE_PATH} target="_blank" rel="noopener noreferrer">
             <TwitterIconSvg />
           </Link>
-          <Link href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+          <Link href={FACEBOOK_PROFILE_PATH} target="_blank" rel="noopener noreferrer">
             <FacebookIconSvg />
           </Link>
         </div>

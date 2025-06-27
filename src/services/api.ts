@@ -1,3 +1,5 @@
+import { AUTH_TOKEN_KEY } from '@/constants/local-storage-keys';
+import { getStorage } from '@/lib/local-storage';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 declare module 'axios' {
@@ -15,7 +17,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    const token = getStorage(AUTH_TOKEN_KEY);
     if (config.withAuth && token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
