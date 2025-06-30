@@ -8,7 +8,7 @@ import TextField from '@/components/TextField';
 import Link from 'next/link';
 import { Images } from '@/lib/images';
 import { useRouter } from 'next/navigation';
-import { USER_LOGIN_PAGE_PATH } from '@/constants/app-routes';
+import { PUBLIC_ROUTE } from '@/constants/app-routes';
 
 const { Title } = Typography;
 interface SignupFormValues {
@@ -138,7 +138,7 @@ export default function SignupForm() {
         </div>
         <div className="text-center text-[#fff2e3]">
           Already have an account?{' '}
-          <a className="font-medium text-[#fff2e3] underline cursor-pointer" onClick={() => router.push(USER_LOGIN_PAGE_PATH)}>
+          <a className="font-medium text-[#fff2e3] underline cursor-pointer" onClick={() => router.push(PUBLIC_ROUTE.USER_LOGIN_PAGE_PATH)}>
             Log In
           </a>
         </div>

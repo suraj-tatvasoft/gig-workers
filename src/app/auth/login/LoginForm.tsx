@@ -7,7 +7,7 @@ import TextField from '@/components/TextField';
 import { loginSchema } from '../../../schemas/auth';
 import { useRouter } from 'next/navigation';
 import { Images } from '@/lib/images';
-import { FORGOT_PASSWORD_PAGE_PATH, SIGNUP_PAGE_PATH } from '@/constants/app-routes';
+import { PUBLIC_ROUTE } from '@/constants/app-routes';
 
 const { Title } = Typography;
 
@@ -80,7 +80,7 @@ export default function LoginForm() {
         <div className="flex justify-end w-full mt-2">
           <button
             type="button"
-            onClick={() => router.push(FORGOT_PASSWORD_PAGE_PATH)}
+            onClick={() => router.push(PUBLIC_ROUTE.FORGOT_PASSWORD_PAGE_PATH)}
             className="font-medium underline text-[#FFF2E3] bg-transparent border-none p-0 cursor-pointer"
           >
             Forgot password ?
@@ -100,7 +100,7 @@ export default function LoginForm() {
         Don&apos;t have an account?{' '}
         <button
           type="button"
-          onClick={() => router.push(SIGNUP_PAGE_PATH)}
+          onClick={() => router.push(PUBLIC_ROUTE.SIGNUP_PAGE_PATH)}
           className="font-medium underline text-[#FFF2E3] bg-transparent border-none p-0 cursor-pointer"
         >
           Sign up

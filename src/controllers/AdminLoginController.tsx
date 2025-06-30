@@ -1,11 +1,10 @@
 import { FormInstance } from 'antd';
 import { toast } from 'react-toastify';
 import { loginSchema } from '@/schemas/auth';
-import api from '@/services/api';
-import { ADMIN_LOGIN_API_ENDPOINT } from '@/lib/config/endpoints/admin';
 import { setStorage } from '@/lib/local-storage';
 import { ADMIN_AUTH_TOKEN_KEY, ADMIN_PROFILE_KEY, AUTH_TOKEN_KEY } from '@/constants/local-storage-keys';
-import { ADMIN_DASHBOARD_PATH } from '@/constants/app-routes';
+import { PRIVATE_ROUTE } from '@/constants/app-routes';
+import { getSession, signIn } from 'next-auth/react';
 
 type LoginValues = { email: string; password: string };
 
@@ -20,19 +19,30 @@ export async function handleAdminLogin(
 
     await loginSchema.validate(values, { abortEarly: false });
 
-    const response = await api.post(ADMIN_LOGIN_API_ENDPOINT, values);
+    const response = await signIn('admin-credentials', {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+    });
 
-    if (response.status === 200 && response.data?.token) {
+    if (response?.error) {
+      setError(response.error);
+      toast.error(response.error);
+    }
+
+    if (response?.ok && response?.status === 200) {
       form.resetFields();
       toast.success('Login successful!');
 
-      setStorage(AUTH_TOKEN_KEY, response.data.token);
-      setStorage(ADMIN_AUTH_TOKEN_KEY, response.data.token);
-      setStorage(ADMIN_PROFILE_KEY, response.data.admin);
+      const session = await getSession();
 
-      router.push(ADMIN_DASHBOARD_PATH);
-    } else {
-      toast.error('Unexpected response from server.');
+      if (session) {
+        setStorage(AUTH_TOKEN_KEY, session.accessToken);
+        setStorage(ADMIN_AUTH_TOKEN_KEY, session.accessToken);
+        setStorage(ADMIN_PROFILE_KEY, session.user);
+
+        router.push(PRIVATE_ROUTE.ADMIN_DASHBOARD_PATH);
+      }
     }
   } catch (err: any) {
     if (err.name === 'ValidationError' && err.inner) {
