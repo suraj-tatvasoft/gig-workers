@@ -7,7 +7,7 @@ import TextField from '@/components/TextField';
 import { loginSchema } from '../../../schemas/auth';
 import { useRouter } from 'next/navigation';
 import { Images } from '@/lib/images';
-import { FORGOT_PASSWORD_PAGE_PATH, SIGNUP_PAGE_PATH } from '@/constants/app-routes';
+import { FORGOT_PASSWORD_PAGE_PATH, PRIVATE_ROUTE, SIGNUP_PAGE_PATH } from '@/constants/app-routes';
 import { signIn } from 'next-auth/react';
 
 const { Title } = Typography;
@@ -28,10 +28,12 @@ export default function LoginForm() {
         password: values.password,
       });
 
-      if (result?.ok) {
-        router.push('/dashboard');
+      if (result?.error === "Email not verified") {
+        setError("Your email is not verified. Please verify your account.");
+      } else if (!result?.ok) {
+        setError("Invalid email or password.");
       } else {
-        setError('Invalid email or password');
+        router.push(PRIVATE_ROUTE.DASHBOARD);
       }
     } catch (err: any) {
       if (err.name === 'ValidationError') {
