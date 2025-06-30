@@ -5,6 +5,7 @@ import { Form, Button, Typography, Checkbox, Image } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { signupSchema } from '../../../schemas/fe/auth';
 import TextField from '@/components/TextField';
+import Link from 'next/link';
 import { Images } from '@/lib/images';
 import { useRouter } from 'next/navigation';
 import { USER_LOGIN_PAGE_PATH } from '@/constants/app-routes';
@@ -121,9 +122,9 @@ export default function SignupForm() {
             <Checkbox>
               <span className="!text-[#FFF2E3]">
                 Accept{' '}
-                <a href="#" className="underline font-medium !text-[#FFF2E3]">
+                <Link href="#" className="underline font-medium !text-[#FFF2E3]">
                   terms & conditions
-                </a>
+                </Link>
               </span>
             </Checkbox>
           </Form.Item>
