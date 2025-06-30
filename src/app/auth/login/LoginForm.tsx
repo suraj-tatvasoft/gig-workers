@@ -8,6 +8,7 @@ import { loginSchema } from '../../../schemas/auth';
 import { useRouter } from 'next/navigation';
 import { Images } from '@/lib/images';
 import { FORGOT_PASSWORD_PAGE_PATH, SIGNUP_PAGE_PATH } from '@/constants/app-routes';
+import { signIn } from 'next-auth/react';
 
 const { Title } = Typography;
 
@@ -20,6 +21,18 @@ export default function LoginForm() {
     try {
       setError(null);
       await loginSchema.validate(values, { abortEarly: false });
+
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (result?.ok) {
+        router.push('/dashboard');
+      } else {
+        setError('Invalid email or password');
+      }
     } catch (err: any) {
       if (err.name === 'ValidationError') {
         const formErrors = err.inner.reduce((acc: any, curr: any) => {
