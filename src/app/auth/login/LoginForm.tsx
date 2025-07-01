@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Form, Button, Typography } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import TextField from '@/components/TextField';
 import { loginSchema } from '../../../schemas/auth';
 import { useRouter } from 'next/navigation';
 import { Images } from '@/lib/images';
-import { FORGOT_PASSWORD_PAGE_PATH, PRIVATE_ROUTE, SIGNUP_PAGE_PATH } from '@/constants/app-routes';
+import { PRIVATE_ROUTE, PUBLIC_ROUTE } from '@/constants/app-routes';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
 
@@ -54,6 +54,10 @@ export default function LoginForm() {
       }
     }
   };
+  
+  const handleGoogleLogin = useCallback(() => {
+    signIn("google", { callbackUrl: PRIVATE_ROUTE.DASHBOARD });
+  }, []);
 
   return (
     <>
@@ -96,7 +100,7 @@ export default function LoginForm() {
         <div className="flex justify-end w-full mt-2">
           <button
             type="button"
-            onClick={() => router.push(FORGOT_PASSWORD_PAGE_PATH)}
+            onClick={() => router.push(PUBLIC_ROUTE.FORGOT_PASSWORD)}
             className="font-medium underline text-[#FFF2E3] bg-transparent border-none p-0 cursor-pointer"
           >
             Forgot password ?
@@ -110,13 +114,13 @@ export default function LoginForm() {
       </Form>
       <div className="text-[#FFF2E3] mt-6 mb-3 text-center text-sm">or sign in using</div>
       <div className="flex justify-center mb-4">
-        <Image src={Images.googleIcon} alt="Google Icon" width={36} height={36} className="cursor-pointer" onClick={() => signIn('google', { callbackUrl: PRIVATE_ROUTE.DASHBOARD })} />
+        <Image src={Images.googleIcon} alt="Google Icon" width={36} height={36} className="cursor-pointer" onClick={handleGoogleLogin} />
       </div>
       <div className="text-center text-[#FFF2E3] text-sm">
         Don&apos;t have an account?{' '}
         <button
           type="button"
-          onClick={() => router.push(SIGNUP_PAGE_PATH)}
+          onClick={() => router.push(PUBLIC_ROUTE.SIGNUP)}
           className="font-medium underline text-[#FFF2E3] bg-transparent border-none p-0 cursor-pointer"
         >
           Sign up

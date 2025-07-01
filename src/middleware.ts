@@ -2,23 +2,26 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { HttpStatusCode } from './lib/enum';
-import { PUBLIC_ROUTE } from './constants/app-routes';
+import { PUBLIC_ROUTE, PUBLIC_API_ROUTES } from './constants/app-routes';
 
 const publicRoutes = (Object.values(PUBLIC_ROUTE) as string[]).filter(
   (path) => path !== '#' && path !== '*'
 );
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const isApiRoute = pathname.startsWith('/api');
+  const publicApiRoutes = Object.values(PUBLIC_API_ROUTES) as string[];
+  const isPublicApiRoute = publicApiRoutes.includes(pathname);
   const isPublicRoute = publicRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + '/')
   );
-  if (isPublicRoute) {
+
+  if (isPublicRoute || isPublicApiRoute) {
     return NextResponse.next();
   }
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const now = Math.floor(Date.now() / 1000);
-  const isApiRoute = pathname.startsWith('/api');
 
   if (!token) {
     if (isApiRoute) {
