@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Form, Button, Typography, Image } from 'antd';
+import { Form, Button, Typography } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import TextField from '@/components/TextField';
 import { loginSchema } from '../../../schemas/auth';
@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { Images } from '@/lib/images';
 import { FORGOT_PASSWORD_PAGE_PATH, PRIVATE_ROUTE, SIGNUP_PAGE_PATH } from '@/constants/app-routes';
 import { signIn } from 'next-auth/react';
+import Image from 'next/image';
 
 const { Title } = Typography;
 
@@ -109,7 +110,7 @@ export default function LoginForm() {
       </Form>
       <div className="text-[#FFF2E3] mt-6 mb-3 text-center text-sm">or sign in using</div>
       <div className="flex justify-center mb-4">
-        <Image src={Images.googleIcon} alt="Google Icon" width={36} height={36} className="cursor-pointer" />
+        <Image src={Images.googleIcon} alt="Google Icon" width={36} height={36} className="cursor-pointer" onClick={() => signIn('google', { callbackUrl: PRIVATE_ROUTE.DASHBOARD })} />
       </div>
       <div className="text-center text-[#FFF2E3] text-sm">
         Don&apos;t have an account?{' '}
