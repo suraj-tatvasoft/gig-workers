@@ -8,8 +8,8 @@ export const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: serverEnv.SMTP_USER,
-    pass: serverEnv.SMTP_PASS,
-  },
+    pass: serverEnv.SMTP_PASS
+  }
 });
 
 export const fromEmail = serverEnv.FROM_EMAIL;
