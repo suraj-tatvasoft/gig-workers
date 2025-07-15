@@ -1,7 +1,6 @@
 import sgMail from '@sendgrid/mail';
-import { serverEnv } from '@/lib/config/serverEnv';
 
-sgMail.setApiKey(serverEnv.SENDGRID_API_KEY);
+sgMail.setApiKey('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');
 
-export const fromEmail = serverEnv.FROM_EMAIL;
+export const fromEmail = 'suraj.rathod@tatvasoft.com';
 export { sgMail };
