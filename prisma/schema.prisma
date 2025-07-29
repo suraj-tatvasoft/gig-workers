@@ -8,19 +8,20 @@ datasource db {
 }
 
 model User {
-  id             BigInt   @id @default(autoincrement())
-  first_name     String?
-  last_name      String?
-  profile_url    String?
-  email          String   @unique
-  password       String
-  role           ROLE     @default(user)
-  is_verified    Boolean  @default(false)
-  is_banned      Boolean  @default(false)
-  is_deleted     Boolean  @default(false)
-  sign_up_type   String?
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
+  id               BigInt   @id @default(autoincrement())
+  first_name       String?
+  last_name        String?
+  profile_url      String?
+  email            String   @unique
+  password         String
+  role             ROLE     @default(user)
+  is_verified      Boolean  @default(false)
+  is_banned        Boolean  @default(false)
+  is_deleted       Boolean  @default(false)
+  sign_up_type     String?
+  reset_token_used Boolean  @default(false)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
 
   // Relations
   provider_bids           Bid[]             @relation("ProviderBid")
@@ -98,10 +99,16 @@ model Admin {
 
 model CMS {
   id          BigInt   @id @default(autoincrement())
-  name        String
-  description String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  title       String
+  slug        String   @unique
+  type        PageType
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  heroSection Json?
+  faqs        Json?
+  steps       Json?
+  richContent Json?
 }
 
 model Plan {
@@ -178,6 +185,8 @@ model Gig {
   completed_at DateTime?
   thumbnail    String?
   attachments  Json?
+  location     String?
+  is_removed   Boolean   @default(false)
   created_at   DateTime  @default(now())
   updated_at   DateTime  @updatedAt
 
@@ -200,7 +209,9 @@ model GigPipeline {
   status     GIG_STATUS @default(open)
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
-  gig        Gig        @relation(fields: [gig_id], references: [id])
+
+  // Relations
+  gig Gig @relation(fields: [gig_id], references: [id])
 }
 
 model Bid {
@@ -406,4 +417,10 @@ enum NOTIFICATION_TYPE {
   warning
   error
   info
+}
+
+enum PageType {
+  landing
+  informative
+  faqs
 }

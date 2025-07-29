@@ -16,6 +16,7 @@ export enum PUBLIC_ROUTE {
   RESET_PASSWORD_PAGE_PATH = '/reset-password',
   ADMIN_LOGIN_PATH = '/admin/login',
   EMAIL_VERIFICATION_PATH = '/email-verification',
+  WORKS = '/works',
   NOT_FOUND = '*'
 }
 
@@ -25,11 +26,16 @@ export enum PRIVATE_ROUTE {
   DASHBOARD = '/dashboard',
   GIGS = '/gigs',
   USER_PROFILE = '/profile',
+  USER_GIGS = '/manage-gigs',
+  PROVIDER_BIDS = '/provider-bids',
   ADMIN_DASHBOARD_PATH = '/admin',
   ADMIN_USERS_DASHBOARD_PATH = '/admin/users',
   ADMIN_GIGS_DASHBOARD_PATH = '/admin/gigs',
   ADMIN_TIER_SYSTEM_DASHBOARD_PATH = '/admin/tier-system',
-  ADMIN_SUBSCRIPTION_PLANS_DASHBOARD_PATH = '/admin/subscriptions'
+  ADMIN_SUBSCRIPTION_PLANS_DASHBOARD_PATH = '/admin/subscriptions',
+  ADMIN_CMS_PAGES_PATH = '/admin/cms_pages',
+  ADMIN_ADD_CMS_PAGES_PATH = '/admin/cms_pages/add',
+  ADMIN_EDIT_CMS_PAGES_PATH = '/admin/cms_pages/edit'
 }
 
 export enum PUBLIC_API_ROUTES {
@@ -38,12 +44,24 @@ export enum PUBLIC_API_ROUTES {
   FORGOT_PASSWORD_API = '/auth/forgot-password',
   RESET_PASSWORD_API = '/auth/reset-password',
   API_FORGOT_PASSWORD = '/auth/forgot-password',
-  WEBHOOK_PAYPAL = '/api/webhook/paypal'
+  WEBHOOK_PAYPAL = '/api/webhook/paypal',
+  CMS_PARENT_API = 'cms',
+  CMS_TYPE_API = 'cms/type',
+  CMS_CONTENT_ID_API = 'cms/content_id',
+  LANDING_PAGE_FAQS_LIST_API = 'faqs',
+  LANDING_PAGE_STEPS_LIST_API = 'working_steps',
+  GIGS_API = '/api/gigs',
+  GIG_DETAIL_PUBLIC_API = '/api/public/gigs'
 }
 
 export enum PRIVATE_API_ROUTES {
   SUBSCRIPTION_PLANS_API = '/subscriptions/plans',
   SUBSCRIPTION_CREATE_API = '/subscriptions/subscribe',
+  USER_ABOUT_UPDATE_API = '/users/profile/about',
+  USER_TAGS_UPDATE_API = '/users/profile/tags',
+  USER_EDUCATION_UPDATE_API = '/users/profile/education',
+  USER_PROFILE_PICTURE_UPDATE_API = '/users/profile/profile-picture',
+  USER_BANNER_IMAGE_UPDATE_API = '/users/profile/banner-image'
 }
 
 export const excludedPublicRoutes = [

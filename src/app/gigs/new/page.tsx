@@ -25,8 +25,8 @@ import { gigService } from '@/services/gig.services';
 
 const TIER_OPTIONS = [
   { value: 'basic', label: 'Basic' },
-  { value: 'standard', label: 'Standard' },
-  { value: 'premium', label: 'Premium' }
+  { value: 'advanced', label: 'Advanced' },
+  { value: 'expert', label: 'Expert' }
 ];
 
 const NewGigPage = () => {
@@ -39,6 +39,7 @@ const NewGigPage = () => {
     title: string;
     description: string;
     tier: string;
+    location: string;
     start_date: string;
     end_date: string;
     min_price: string;
@@ -50,6 +51,7 @@ const NewGigPage = () => {
     title: '',
     description: '',
     tier: 'basic',
+    location: '',
 
     start_date: '',
     end_date: '',
@@ -65,20 +67,18 @@ const NewGigPage = () => {
 
   const handleSubmit = async (values: any, { setSubmitting, resetForm }: FormikHelpers<any>) => {
     try {
-      console.log(values);
-
       const formData = new FormData();
 
       formData.append('title', values.title);
       formData.append('description', values.description);
       formData.append('tier', values.tier);
+      formData.append('location', values.location);
       formData.append('start_date', values.start_date);
       formData.append('end_date', values.end_date);
       formData.append('price_min', values.min_price);
       formData.append('price_max', values.max_price);
       formData.append('keywords', values.keywords.join(','));
       [...values.attachments].forEach((file: File, index: number) => {
-        console.log(file);
         formData.append('attachments', file);
       });
       if (values.thumbnail) {
@@ -116,6 +116,7 @@ const NewGigPage = () => {
             title: Yup.string().required('Required'),
             description: Yup.string().required('Required'),
             tier: Yup.string().required('Required'),
+            location: Yup.string().required('Required'),
 
             start_date: Yup.string().required('Required'),
             end_date: Yup.string().required('Required'),
@@ -168,26 +169,43 @@ const NewGigPage = () => {
                         {errors.description && touched.description && <div className="text-sm text-red-500">{errors.description}</div>}
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="tier">Tier</Label>
-                        <Select value={values.tier} onValueChange={(value) => setFieldValue('tier', value)}>
-                          <SelectTrigger
-                            className={cn(
-                              '!h-10 rounded-lg border-gray-700/50 bg-inherit px-4 py-2',
-                              errors.tier && touched.tier && 'border-red-500'
-                            )}
-                          >
-                            <SelectValue placeholder="Select tier" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {TIER_OPTIONS.map((tier) => (
-                              <SelectItem key={tier.value} value={tier.value}>
-                                {tier.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {errors.tier && touched.tier && <div className="text-sm text-red-500">{errors.tier}</div>}
+                      <div className="">
+                        <div className="flex w-full items-center gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="tier">Tier</Label>
+                            <Select value={values.tier} onValueChange={(value) => setFieldValue('tier', value)}>
+                              <SelectTrigger
+                                className={cn(
+                                  '!h-10 rounded-lg border-gray-700/50 bg-inherit px-4 py-2',
+                                  errors.tier && touched.tier && 'border-red-500'
+                                )}
+                              >
+                                <SelectValue placeholder="Select tier" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {TIER_OPTIONS.map((tier) => (
+                                  <SelectItem key={tier.value} value={tier.value}>
+                                    {tier.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="w-full space-y-2">
+                            <Label htmlFor="location">Location *</Label>
+                            <Input
+                              id="location"
+                              placeholder="e.g., Remote"
+                              className={cn(
+                                '!h-10 w-full rounded-lg border-gray-700/50 bg-inherit px-4 py-2',
+                                errors.location && touched.location && 'border-red-500'
+                              )}
+                              {...getFieldProps('location')}
+                            />
+                          </div>
+                        </div>
+                        {errors.location && touched.location && <div className="text-sm text-red-500">{errors.location}</div>}
                       </div>
 
                       <div className="space-y-2">

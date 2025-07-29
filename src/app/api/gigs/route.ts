@@ -25,10 +25,6 @@ export async function POST(request: Request) {
       return errorResponse({ code: 'USER_NOT_FOUND', message: 'User not found', statusCode: HttpStatusCode.NOT_FOUND });
     }
 
-    if (user?.role !== ROLE.provider) {
-      return errorResponse({ code: 'FORBIDDEN', message: 'Only providers can create gigs', statusCode: HttpStatusCode.FORBIDDEN });
-    }
-
     const formData = await request.formData();
 
     const title = formData.get('title')?.toString();
@@ -37,6 +33,8 @@ export async function POST(request: Request) {
     const end_date = formData.get('end_date')?.toString();
     const price_min = formData.get('price_min')?.toString();
     const price_max = formData.get('price_max')?.toString();
+    const location = formData.get('location')?.toString();
+
     const keywords = formData.get('keywords')
       ? formData
           .get('keywords')
@@ -46,10 +44,10 @@ export async function POST(request: Request) {
       : [];
     const tier = formData.get('tier')?.toString();
 
-    if (!title || !price_min || !price_max || !tier || !description || !start_date) {
+    if (!title || !price_min || !price_max || !tier || !description || !start_date || !location) {
       return errorResponse({
         code: 'BAD_REQUEST',
-        message: 'Title, price range, tier, and description are required',
+        message: 'Title, price range, tier, location, and description are required',
         statusCode: HttpStatusCode.BAD_REQUEST
       });
     }
@@ -112,6 +110,7 @@ export async function POST(request: Request) {
         end_date: end_date || null,
         thumbnail: thumbnailUrl || '',
         attachments: attachmentUrls || [],
+        location: location || null,
         user: {
           connect: { id: session.user.id }
         },
@@ -143,14 +142,66 @@ export async function POST(request: Request) {
 // GET /api/gigs - Get all gigs with pagination, search, and filtering
 export async function GET(request: Request) {
   try {
+    const session = await getServerSession(authOptions);
     const { searchParams } = new URL(request.url);
 
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '10')));
     const skip = (page - 1) * limit;
     const search = (searchParams.get('search') || '').trim();
+    const minPrice = searchParams.get('minPrice') ? parseFloat(searchParams.get('minPrice') as string) : undefined;
+    const maxPrice = searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice') as string) : undefined;
+    const deliveryTime = searchParams.get('deliveryTime') ? parseInt(searchParams.get('deliveryTime') as string) : undefined;
+    const tiersParam = searchParams.get('tiers');
+    const tiers = tiersParam ? tiersParam.split(',').map((t) => t.trim().toLowerCase()) : [];
 
-    const baseWhere: any = {};
+    const baseWhere: any = {
+      AND: []
+    };
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      const priceConditions = [];
+
+      if (minPrice !== undefined) {
+        priceConditions.push({
+          price_range: {
+            path: ['min'],
+            gte: minPrice
+          }
+        });
+      }
+
+      if (maxPrice !== undefined) {
+        priceConditions.push({
+          price_range: {
+            path: ['max'],
+            lte: maxPrice
+          }
+        });
+      }
+
+      if (priceConditions.length > 0) {
+        baseWhere.AND.push({ OR: priceConditions });
+      }
+    }
+
+    if (deliveryTime !== undefined) {
+      const deliveryDays = parseInt(deliveryTime.toString());
+      if (!isNaN(deliveryDays)) {
+        const today = new Date();
+        const deliveryDate = new Date();
+        deliveryDate.setDate(today.getDate() + deliveryDays);
+
+        baseWhere.AND.push({
+          start_date: {
+            lte: deliveryDate
+          },
+          end_date: {
+            gte: today
+          }
+        });
+      }
+    }
 
     if (search) {
       const searchConditions: any = [
@@ -167,20 +218,28 @@ export async function GET(request: Request) {
         });
       }
 
-      baseWhere.AND = [
-        {
-          OR: searchConditions
-        }
-      ];
+      baseWhere.AND.push({
+        OR: searchConditions
+      });
     }
 
     const whereClause = {
       ...baseWhere,
+      ...(tiers.length > 0 && {
+        tier: {
+          in: tiers as TIER[]
+        }
+      }),
       pipeline: {
         is: {
           status: GIG_STATUS.open
         }
-      }
+      },
+      ...(session?.user?.id && {
+        user_id: {
+          not: session.user.id
+        }
+      })
     };
 
     const [total, gigs] = await Promise.all([
@@ -191,25 +250,10 @@ export async function GET(request: Request) {
         where: whereClause,
         include: {
           user: {
-            select: {
-              id: true,
-              first_name: true,
-              last_name: true,
-              email: true,
-              profile_url: true,
-              created_at: true,
-              updated_at: true,
-              role: true
-            }
+            select: { id: true, first_name: true, last_name: true, email: true, profile_url: true, created_at: true, updated_at: true, role: true }
           },
-          pipeline: {
-            select: {
-              id: true,
-              status: true,
-              created_at: true,
-              updated_at: true
-            }
-          }
+          pipeline: { select: { id: true, status: true, created_at: true, updated_at: true } },
+          _count: { select: { bids: true } }
         },
         orderBy: {
           created_at: 'desc'
@@ -224,22 +268,13 @@ export async function GET(request: Request) {
     const hasNextPage = currentPage < totalPages;
     const hasPreviousPage = currentPage > 1;
 
-    return safeJsonResponse(
-      {
-        success: true,
-        message: 'Gigs fetched successfully',
-        data: {
-          gigs,
-          pagination: {
-            total,
-            page: currentPage,
-            totalPages,
-            limit
-          }
-        }
-      },
-      { status: HttpStatusCode.OK }
-    );
+    const responseData = {
+      success: true,
+      message: 'Gigs fetched successfully',
+      data: { gigs, pagination: { total, page: currentPage, totalPages, limit } }
+    };
+
+    return safeJsonResponse(responseData, { status: HttpStatusCode.OK });
   } catch (error) {
     console.error('Error fetching gigs:', error);
     const errorMessage = error instanceof Error ? error.message : 'Failed to fetch gigs';
