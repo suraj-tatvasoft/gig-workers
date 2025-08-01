@@ -2,11 +2,12 @@ import { getServerSession } from 'next-auth';
 
 import prisma from '@/lib/prisma';
 import { authOptions } from '../auth/[...nextauth]/route';
-import { ROLE, GIG_STATUS, TIER } from '@prisma/client';
+import { GIG_STATUS, SUBSCRIPTION_STATUS, TIER } from '@prisma/client';
 import { uploadFile } from '@/lib/utils/file-upload';
 import { HttpStatusCode } from '@/enums/shared/http-status-code';
 import { errorResponse } from '@/lib/api-response';
 import { safeJsonResponse } from '@/utils/apiResponse';
+import { generateUniqueSlug } from '@/lib/utils/gig-slug-generator';
 
 // POST /api/gigs - Create a new gig
 export async function POST(request: Request) {
@@ -25,6 +26,42 @@ export async function POST(request: Request) {
       return errorResponse({ code: 'USER_NOT_FOUND', message: 'User not found', statusCode: HttpStatusCode.NOT_FOUND });
     }
 
+    const activeSubscription = await prisma.subscription.findFirst({
+      where: {
+        user_id: session.user.id,
+        status: SUBSCRIPTION_STATUS.active,
+        subscription_expires_at: { gt: new Date() }
+      },
+      orderBy: { created_at: 'desc' },
+      include: { plan: true }
+    });
+
+    if (!activeSubscription) {
+      return errorResponse({
+        code: 'NO_SUBSCRIPTION',
+        message: 'Active subscription not found',
+        statusCode: HttpStatusCode.FORBIDDEN
+      });
+    }
+
+    const { plan } = activeSubscription;
+
+    const totalGigs = await prisma.gig.count({
+      where: {
+        user_id: session.user.id,
+        is_removed: false
+      }
+    });
+
+    if (plan.maxGigs !== -1 && totalGigs >= plan.maxGigs) {
+      return errorResponse({
+        code: 'GIG_LIMIT_REACHED',
+        message: `You have reached your gig creation limit (${plan.maxGigs}) for this month.`,
+        statusCode: HttpStatusCode.FORBIDDEN
+      });
+    }
+
+
     const formData = await request.formData();
 
     const title = formData.get('title')?.toString();
@@ -34,6 +71,7 @@ export async function POST(request: Request) {
     const price_min = formData.get('price_min')?.toString();
     const price_max = formData.get('price_max')?.toString();
     const location = formData.get('location')?.toString();
+    const slug = await generateUniqueSlug(title as string);
 
     const keywords = formData.get('keywords')
       ? formData
@@ -99,6 +137,7 @@ export async function POST(request: Request) {
     const gig = await prisma.gig.create({
       data: {
         title,
+        slug,
         description: description || null,
         price_range: {
           min: parseFloat(price_min),

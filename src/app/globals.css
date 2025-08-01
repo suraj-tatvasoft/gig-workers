@@ -4,6 +4,11 @@
 @custom-variant dark (&:is(.dark *));
 @tailwind utilities;
 
+html,
+body {
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
 :root {
   --foreground: oklch(0.129 0.042 264.695);
   --background: oklch(0.984 0.003 247.858);
@@ -224,4 +229,8 @@ input:-webkit-autofill:active {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+}
+
+.radix-calendar select {
+  @apply bg-popover rounded-md border border-gray-700 px-2 py-1 text-white;
 }

@@ -11,14 +11,16 @@ import { PRIVATE_ROUTE } from '@/constants/app-routes';
 import { ClipboardList, Layers3 } from 'lucide-react';
 import { DASHBOARD_NAVIGATION_MENU } from '@/constants';
 import LandingHeader from '@/components/Header';
+import Loader from '../Loader';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const dispatch = useDispatch();
   const { role } = useSelector((state: RootState) => state.user);
 
@@ -30,8 +32,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const subscriptionType = session?.user.subscription;
     const dynamicMenu = [...DASHBOARD_NAVIGATION_MENU];
 
-    const hasValidSubscription =
-      subscriptionType === 'basic' || subscriptionType === 'pro';
+    const hasValidSubscription = subscriptionType === 'basic' || subscriptionType === 'pro';
 
     if (hasValidSubscription) {
       if (role === 'user') {
@@ -54,6 +55,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     return dynamicMenu;
   }, [session?.user.subscriptionType, role]);
 
+  if (status === 'loading' || isLoggingOut) {
+    return <Loader isLoading={true} />;
+  }
+
   return (
     <div className="bg-foreground flex min-h-screen w-full">
       {session ? (
@@ -62,10 +67,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             collapsed={sidebarCollapsed}
             onToggle={(collapsed) => setSidebarCollapsed(collapsed)}
             navigation_menu={navigationMenu}
+            onStartLogout={() => setIsLoggingOut(true)}
           />
 
           <div
-            className={`w-full flex-1 overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'ml-18' : 'ml-64'}`}
+            className={`flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'ml-18' : 'ml-64'}`}
           >
             <Header
               collapsed={sidebarCollapsed}
@@ -73,18 +79,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               role={role}
               onRoleChange={handleRoleChange}
               subscriptionType={session?.user.subscriptionType}
+              onStartLogout={() => setIsLoggingOut(true)}
             />
 
-            <div className="mt-18">{children}</div>
+            <div className="mt-18 flex-1">{children}</div>
           </div>
         </>
       ) : (
-        <div
-          className={`w-full flex-1 overflow-hidden transition-all duration-300`}
-        >
+        <div className={`flex min-h-0 w-full flex-1 flex-col overflow-hidden transition-all duration-300`}>
           <LandingHeader />
 
-          <div className="">{children}</div>
+          <div className="flex-1">{children}</div>
         </div>
       )}
     </div>

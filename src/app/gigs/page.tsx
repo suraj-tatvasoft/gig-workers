@@ -18,19 +18,21 @@ import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 
-import { formatDate, getDaysBetweenDates } from '@/lib/date-format';
+import { formatOnlyDate, getDaysBetweenDates } from '@/lib/date-format';
 import { useDebouncedEffect } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils';
 import { RootState, useDispatch, useSelector } from '@/store/store';
 import { gigService } from '@/services/gig.services';
+import { PRIVATE_ROUTE } from '@/constants/app-routes';
+import GigsShimmerCards from '@/components/shimmer/GigsShimmerCards';
 
-const tierColors: any = {
+const tierColors: Record<string, string> = {
   basic: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
   advanced: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
   expert: 'bg-amber-500/10 text-amber-400 border-amber-500/20'
 };
 
-const tierLabels: any = {
+const tierLabels: Record<string, string> = {
   basic: 'basic',
   advanced: 'advanced',
   expert: 'expert'
@@ -42,7 +44,7 @@ const tierOptions = [
   { value: 'expert', label: 'Expert' }
 ];
 
-export const GigCard = ({ id, title, description, tier, price_range, start_date, end_date, thumbnail, _count, user }: any) => {
+export const GigCard = ({ id, slug, title, description, tier, price_range, start_date, end_date, thumbnail, _count, user }: any) => {
   const router = useRouter();
 
   return (
@@ -63,7 +65,7 @@ export const GigCard = ({ id, title, description, tier, price_range, start_date,
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-3 flex items-start justify-between">
           <div className="flex-1">
-            <Link href={`/gigs/${id}`} className="group-hover:text-blue-400">
+            <Link href={`${PRIVATE_ROUTE.GIGS}/${slug}`} className="group-hover:text-blue-400">
               <h3 className="text-md mb-1 line-clamp-2 font-bold text-white capitalize transition-colors">{title}</h3>
             </Link>
             <p className="text-sm text-gray-400">
@@ -81,7 +83,7 @@ export const GigCard = ({ id, title, description, tier, price_range, start_date,
             </div>
             <div>
               <p className="text-xs text-gray-400">Delivery</p>
-              <p className="text-xs text-white">{formatDate(end_date)}</p>
+              <p className="text-xs text-white">{formatOnlyDate(end_date)}</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -95,7 +97,7 @@ export const GigCard = ({ id, title, description, tier, price_range, start_date,
           </div>
           <div className="flex items-center space-x-2">
             <div className="flex size-8 items-center justify-center rounded-full bg-blue-900/30">
-              <Calendar className="size-4 text-blue-400" />
+              <CalendarIcon className="size-4 text-blue-400" />
             </div>
             <div>
               <p className="text-xs text-gray-400">Timeline</p>
@@ -120,7 +122,7 @@ export const GigCard = ({ id, title, description, tier, price_range, start_date,
             </div>
           </div>
           <Button
-            onClick={() => router.push(`/gigs/${id}`)}
+            onClick={() => router.push(`${PRIVATE_ROUTE.GIGS}/${slug}`)}
             className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500"
           >
             Place Bid
@@ -133,6 +135,7 @@ export const GigCard = ({ id, title, description, tier, price_range, start_date,
 
 export const GigUserCard = ({
   id,
+  slug,
   title,
   description,
   tier,
@@ -150,7 +153,7 @@ export const GigUserCard = ({
         isActive ? 'bg-blue-900/10' : 'bg-gray-800/50'
       } transition-all duration-300 ${
         isActive ? 'hover:border-blue-400 hover:shadow-blue-500/20' : 'hover:border-gray-600 hover:shadow-gray-900/20'
-        }`}
+      }`}
     >
       {isActive && <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-blue-500 to-blue-400" />}
       {isActive && activeStatus && (
@@ -160,11 +163,11 @@ export const GigUserCard = ({
               variant="outline"
               className={`px-3 py-1 text-xs font-medium ${
                 activeStatus === 'accepted'
-                ? 'border-green-500/50 text-green-400'
-                : activeStatus === 'running'
-                  ? 'border-yellow-500/50 text-yellow-400'
-                  : 'border-emerald-500/50 text-emerald-400'
-                }`}
+                  ? 'border-green-500/50 text-green-400'
+                  : activeStatus === 'running'
+                    ? 'border-yellow-500/50 text-yellow-400'
+                    : 'border-emerald-500/50 text-emerald-400'
+              }`}
             >
               {activeStatus === 'accepted' ? 'Accepted' : activeStatus === 'running' ? 'Running' : 'Completed'}
             </Badge>
@@ -191,7 +194,7 @@ export const GigUserCard = ({
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-3 flex items-start justify-between">
           <div className="flex-1">
-            <Link href={`/gigs/${id}`} className="group-hover:text-blue-400">
+            <Link href={`${PRIVATE_ROUTE.GIGS}/${slug}`} className="group-hover:text-blue-400">
               <h3 className="text-md mb-1 line-clamp-2 font-bold text-white transition-colors">{title}</h3>
             </Link>
             <p className="text-sm text-gray-400">
@@ -216,7 +219,7 @@ export const GigUserCard = ({
             </div>
             <div>
               <p className="text-xs text-gray-400">Delivery</p>
-              <p className="text-xs text-white">{formatDate(end_date)}</p>
+              <p className="text-xs text-white">{formatOnlyDate(end_date)}</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -271,16 +274,30 @@ const GigsPage = () => {
   const [search, setSearch] = useState('');
 
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
-  const [filters, setFilters] = useState<{ tiers: string[]; minPrice: string; maxPrice: string; rating: number; startDate: string, endDate: string }>({
+  const [filters, setFilters] = useState<{
+    tiers: string[];
+    minPrice: string;
+    maxPrice: string;
+    rating: number;
+    startDate: string;
+    endDate: string;
+  }>({
     tiers: [],
     minPrice: '',
     maxPrice: '',
     rating: 0,
     startDate: '',
-    endDate: '',
+    endDate: ''
   });
   const [activeFilters, setActiveFilters] = useState<
-    Partial<{ tiers: string[]; minPrice: string; maxPrice: string; rating: number; startDate: string; endDate: string }>
+    Partial<{
+      tiers: string[];
+      minPrice: string;
+      maxPrice: string;
+      rating: number;
+      startDate: string;
+      endDate: string;
+    }>
   >({});
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -300,17 +317,38 @@ const GigsPage = () => {
     if (pagination.page < pagination.totalPages) {
       const filterParams = {
         ...(activeFilters.tiers?.length && { tiers: activeFilters.tiers }),
-        ...(activeFilters.minPrice !== undefined && activeFilters.minPrice !== '' && { minPrice: activeFilters.minPrice }),
-        ...(activeFilters.maxPrice !== undefined && activeFilters.maxPrice !== '' && { maxPrice: activeFilters.maxPrice }),
+        ...(activeFilters.minPrice !== undefined &&
+          activeFilters.minPrice !== '' && {
+            minPrice: activeFilters.minPrice
+          }),
+        ...(activeFilters.maxPrice !== undefined &&
+          activeFilters.maxPrice !== '' && {
+            maxPrice: activeFilters.maxPrice
+          }),
         ...(activeFilters.rating !== undefined && activeFilters.rating !== 0 && { rating: activeFilters.rating }),
-        ...(activeFilters.startDate !== undefined && activeFilters.startDate !== '' && { startDate: activeFilters.startDate }),
+        ...(activeFilters.startDate !== undefined &&
+          activeFilters.startDate !== '' && {
+            startDate: activeFilters.startDate
+          }),
         ...(activeFilters.endDate !== undefined && activeFilters.endDate !== '' && { endDate: activeFilters.endDate })
       };
 
       if (session?.user.role === 'user' || user?.role === 'user') {
-        dispatch(gigService.getOwnersGig({ page: pagination.page + 1, search, ...filterParams }) as any);
+        dispatch(
+          gigService.getOwnersGig({
+            page: pagination.page + 1,
+            search,
+            ...filterParams
+          }) as any
+        );
       } else {
-        dispatch(gigService.getGigs({ page: pagination.page + 1, search, ...filterParams }) as any);
+        dispatch(
+          gigService.getGigs({
+            page: pagination.page + 1,
+            search,
+            ...filterParams
+          }) as any
+        );
       }
     }
   }, [pagination.page, pagination.totalPages, search, activeFilters]);
@@ -320,7 +358,14 @@ const GigsPage = () => {
       dispatch(gigService.clearGigs() as any);
       setSearch('');
       setActiveFilters({});
-      setFilters({ tiers: [], minPrice: '', maxPrice: '', rating: 0, startDate: '', endDate: '' });
+      setFilters({
+        tiers: [],
+        minPrice: '',
+        maxPrice: '',
+        rating: 0,
+        startDate: '',
+        endDate: ''
+      });
 
       if (session?.user.role === 'user' || user?.role === 'user') {
         dispatch(gigService.getOwnersGig({ page: 1, search: '' }) as any);
@@ -332,42 +377,45 @@ const GigsPage = () => {
     [user?.role]
   );
 
-const handleSearch = () => {
-  const filterParams = {
-    ...(activeFilters.tiers?.length && { tiers: activeFilters.tiers }),
-    ...(activeFilters.minPrice !== undefined && activeFilters.minPrice !== '' && { minPrice: activeFilters.minPrice }),
-    ...(activeFilters.maxPrice !== undefined && activeFilters.maxPrice !== '' && { maxPrice: activeFilters.maxPrice }),
-    ...(activeFilters.rating !== undefined && activeFilters.rating !== 0 && { rating: activeFilters.rating }),
-    ...(activeFilters.startDate !== undefined && activeFilters.startDate !== '' && { startDate: activeFilters.startDate }),
-    ...(activeFilters.endDate !== undefined && activeFilters.endDate !== '' && { endDate: activeFilters.endDate }),
+  const handleSearch = () => {
+    const filterParams = {
+      ...(activeFilters.tiers?.length && { tiers: activeFilters.tiers }),
+      ...(activeFilters.minPrice !== undefined && activeFilters.minPrice !== '' && { minPrice: activeFilters.minPrice }),
+      ...(activeFilters.maxPrice !== undefined && activeFilters.maxPrice !== '' && { maxPrice: activeFilters.maxPrice }),
+      ...(activeFilters.rating !== undefined && activeFilters.rating !== 0 && { rating: activeFilters.rating }),
+      ...(activeFilters.startDate !== undefined &&
+        activeFilters.startDate !== '' && {
+          startDate: activeFilters.startDate
+        }),
+      ...(activeFilters.endDate !== undefined && activeFilters.endDate !== '' && { endDate: activeFilters.endDate })
+    };
+
+    if (session?.user.role === 'user' || user?.role === 'user') {
+      dispatch(gigService.getOwnersGig({ page: 1, search, ...filterParams }) as any);
+    } else {
+      dispatch(gigService.getGigs({ page: 1, search, ...filterParams }) as any);
+    }
   };
 
-  if (session?.user.role === 'user' || user?.role === 'user') {
-    dispatch(gigService.getOwnersGig({ page: 1, search, ...filterParams }) as any);
-  } else {
-    dispatch(gigService.getGigs({ page: 1, search, ...filterParams }) as any);
-  }
-};
+  const handleApplyFilters = () => {
+    const filterParams = {
+      ...(filters.tiers?.length && { tiers: filters.tiers }),
+      ...(filters.minPrice !== undefined && filters.minPrice !== '' && { minPrice: filters.minPrice }),
+      ...(filters.maxPrice !== undefined && filters.maxPrice !== '' && { maxPrice: filters.maxPrice }),
+      ...(filters.rating !== undefined && filters.rating !== 0 && { rating: filters.rating }),
+      ...(filters.startDate !== undefined && filters.startDate !== '' && { startDate: filters.startDate }),
+      ...(filters.endDate !== undefined && filters.endDate !== '' && { endDate: filters.endDate })
+    };
 
-const handleApplyFilters = () => {
-  const filterParams = {
-    ...(filters.tiers?.length && { tiers: filters.tiers }),
-    ...(filters.minPrice !== undefined && filters.minPrice !== '' && { minPrice: filters.minPrice }),
-    ...(filters.maxPrice !== undefined && filters.maxPrice !== '' && { maxPrice: filters.maxPrice }),
-    ...(filters.rating !== undefined && filters.rating !== 0 && { rating: filters.rating }),
-    ...(filters.startDate !== undefined && filters.startDate !== '' && { startDate: filters.startDate }),
-    ...(filters.endDate !== undefined && filters.endDate !== '' && { endDate: filters.endDate }),
+    setActiveFilters((prev) => ({ ...prev, ...filterParams }));
+    setIsFilterDialogOpen(false);
+
+    if (session?.user.role === 'user' || user?.role === 'user') {
+      dispatch(gigService.getOwnersGig({ page: 1, search, ...filterParams }) as any);
+    } else {
+      dispatch(gigService.getGigs({ page: 1, search, ...filterParams }) as any);
+    }
   };
-
-  setActiveFilters((prev) => ({ ...prev, ...filterParams }));
-  setIsFilterDialogOpen(false);
-
-  if (session?.user.role === 'user' || user?.role === 'user') {
-    dispatch(gigService.getOwnersGig({ page: 1, search, ...filterParams }) as any);
-  } else {
-    dispatch(gigService.getGigs({ page: 1, search, ...filterParams }) as any);
-  }
-};
 
   const handleResetFilters = () => {
     const defaultFilters = {
@@ -624,30 +672,32 @@ const handleApplyFilters = () => {
               dataLength={ownGigs.length}
               next={loadMore}
               hasMore={pagination.page < pagination.totalPages}
-              loader={<div className="col-span-2 py-4 text-center text-sm text-gray-400">Loading more gigs...</div>}
+              loader={<GigsShimmerCards />}
               scrollThreshold={0.9}
-              className="grid grid-cols-1 gap-6 lg:grid-cols-3"
+              className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
             >
-              {ownGigs.map((gig: any, index: any) => (
+              {ownGigs.map((gig, index) => (
                 <GigUserCard key={`${gig.id}-${index}`} role={user?.role} {...gig} openDeleteConfirmation={openDeleteConfirmation} />
               ))}
+              {loading && <GigsShimmerCards />}
             </InfiniteScroll>
           ) : (
             <InfiniteScroll
               dataLength={gigs.length}
               next={loadMore}
               hasMore={pagination.page < pagination.totalPages}
-              loader={<div className="col-span-2 py-4 text-center text-sm text-gray-400">Loading more gigs...</div>}
+              loader={<GigsShimmerCards />}
               scrollThreshold={0.9}
-              className="grid grid-cols-1 gap-6 lg:grid-cols-3"
+              className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
             >
-              {gigs.map((gig: any, index: any) => (
+              {gigs.map((gig, index) => (
                 <GigCard key={`${gig.id}-${index}`} role={user?.role} {...gig} />
               ))}
+              {loading && <GigsShimmerCards />}
             </InfiniteScroll>
           )}
 
-          {gigs.length === 0 && ownGigs.length === 0 && (
+          {gigs.length === 0 && ownGigs.length === 0 && !loading && (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="mb-4 rounded-full bg-gray-800 p-4">
                 <Search className="h-8 w-8 text-gray-400" />
@@ -734,10 +784,10 @@ const handleApplyFilters = () => {
                           variant={'outline'}
                           className={cn(
                             'w-full rounded-lg border-gray-700/50 bg-inherit px-4 py-2 text-left font-normal text-white hover:bg-inherit hover:text-white',
-                            !filters.startDate && 'text-muted-foreground hover:text-muted-foreground',
+                            !filters.startDate && 'text-muted-foreground hover:text-muted-foreground'
                           )}
                         >
-                          {filters.startDate ? formatDate(filters.startDate) : <span>Pick a date</span>}
+                          {filters.startDate ? formatOnlyDate(filters.startDate) : <span>Pick a date</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </PopoverTrigger>
@@ -761,10 +811,10 @@ const handleApplyFilters = () => {
                           variant={'outline'}
                           className={cn(
                             'w-full rounded-lg border-gray-700/50 bg-inherit px-4 py-2 text-left font-normal text-white hover:bg-inherit hover:text-white',
-                            !filters.endDate && 'text-muted-foreground hover:text-muted-foreground',
+                            !filters.endDate && 'text-muted-foreground hover:text-muted-foreground'
                           )}
                         >
-                          {filters.endDate ? formatDate(filters.endDate) : <span>Pick a date</span>}
+                          {filters.endDate ? formatOnlyDate(filters.endDate) : <span>Pick a date</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </PopoverTrigger>

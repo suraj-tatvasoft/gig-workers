@@ -3,12 +3,12 @@ import { z } from 'zod';
 
 import prisma from '@/lib/prisma';
 import { authOptions } from '../../../auth/[...nextauth]/route';
-import { ROLE, BID_STATUS, NOTIFICATION_TYPE, GIG_STATUS } from '@prisma/client';
+import { ROLE, BID_STATUS, GIG_STATUS, SUBSCRIPTION_STATUS } from '@prisma/client';
 import { HttpStatusCode } from '@/enums/shared/http-status-code';
 import { errorResponse } from '@/lib/api-response';
 import { safeJsonResponse } from '@/utils/apiResponse';
-import { sendNotification } from '@/lib/socket/socket-server';
 import { getSocketServer } from '@/app/api/socket/route';
+import { endOfMonth } from 'date-fns';
 
 const io = getSocketServer();
 
@@ -30,10 +30,10 @@ export async function GET(request: Request, { params }: { params: { id: string }
     const limit = parseInt(searchParams.get('limit') || '5');
     const skip = (page - 1) * limit;
 
-    const gigId = BigInt(params.id);
+    const gigId = await params.id;
 
     const gig = await prisma.gig.findUnique({
-      where: { id: gigId },
+      where: { slug: gigId },
       select: { id: true, user_id: true }
     });
     if (!gig) {
@@ -47,8 +47,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
         data: { items: [], pagination: { total: 0, page: 1, limit, totalPages: 0 } }
       });
     }
-
-    console.log(gig);
 
     const total = await prisma.bid.count({
       where: { gig_id: gig.id, status: BID_STATUS.pending }
@@ -157,13 +155,6 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const notificationMessage =
       status === 'accept' ? `Your bid for "${bid.gig.title}" has been accepted!` : `Your bid for "${bid.gig.title}" has been rejected.`;
 
-    await sendNotification(io, bid.provider_id.toString(), {
-      title: 'New Bid Received',
-      message: notificationMessage,
-      module: 'gigs',
-      type: NOTIFICATION_TYPE.info
-    });
-
     return safeJsonResponse(
       { success: true, message: notificationMessage, data: { bid: updatedBid, message: notificationMessage } },
       { status: HttpStatusCode.OK }
@@ -201,6 +192,42 @@ export async function POST(request: Request, { params }: { params: { id: string 
       return errorResponse({ code: 'ACCOUNT_BANNED', message: 'Your account is banned from placing bids', statusCode: HttpStatusCode.FORBIDDEN });
     }
 
+    const activeSubscription = await prisma.subscription.findFirst({
+      where: {
+        user_id: user.id,
+        status: SUBSCRIPTION_STATUS.active,
+        subscription_expires_at: { gt: new Date() }
+      },
+      orderBy: { created_at: 'desc' },
+      include: { plan: true }
+    });
+
+    if (!activeSubscription) {
+      return errorResponse({ code: 'NO_SUBSCRIPTION', message: 'Active subscription not found', statusCode: HttpStatusCode.FORBIDDEN });
+    }
+
+    const { created_at: startDate, plan } = activeSubscription;
+    const cycleStart = new Date(startDate);
+    const cycleEnd = endOfMonth(cycleStart);
+
+    const bidsThisCycle = await prisma.bid.count({
+      where: {
+        provider_id: user.id,
+        created_at: {
+          gte: cycleStart,
+          lte: cycleEnd
+        }
+      }
+    });
+
+    if (plan.maxBids !== -1 && bidsThisCycle >= plan.maxBids) {
+      return errorResponse({
+        code: 'BID_LIMIT_REACHED',
+        message: `You have reached your bid limit (${plan.maxBids}) for this month.`,
+        statusCode: HttpStatusCode.FORBIDDEN
+      });
+    }
+
     const body = await request.json();
     const validation = bidSchema.safeParse(body);
     if (!validation.success) {
@@ -228,14 +255,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     const bid = await prisma.bid.create({
       data: { gig_id: gigId, provider_id: user.id, user_id: gig.user_id, proposal, bid_price: bidPrice, status: BID_STATUS.pending },
-      select: { id: true, bid_price: true, status: true, created_at: true }
-    });
-
-    await sendNotification(io, gig.user_id.toString(), {
-      title: 'New Bid Received',
-      message: 'You have received a new bid on your gig',
-      module: 'gigs',
-      type: NOTIFICATION_TYPE.info
+      select: { id: true, bid_price: true, status: true, created_at: true, user_id: true, gig: { select: { id: true, title: true } } }
     });
 
     return safeJsonResponse({ success: true, message: 'Bid placed successfully', data: bid }, { status: HttpStatusCode.CREATED });

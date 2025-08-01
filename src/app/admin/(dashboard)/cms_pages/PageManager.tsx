@@ -200,7 +200,7 @@ export default function PageManager() {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 p-0 text-gray-400 hover:bg-[#374151] hover:text-white"
-                              onClick={() => handleEdit(page.id)}
+                              onClick={() => handleEdit(page.slug)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>

@@ -2,8 +2,9 @@ import { setGigs, setLoading, clearGigs, setOwnGigs, removeGig, setBids, updateB
 import { AppDispatch } from '@/store/store';
 
 import apiService from './api';
-
+import { ApiResponse } from '@/types/shared/api-response';
 import { toast } from '@/lib/toast';
+import { PUBLIC_API_ROUTES } from '@/constants/app-routes';
 
 export const gigService = {
   createGig({ body }: { body: FormData }) {
@@ -69,7 +70,12 @@ export const gigService = {
           withAuth: true
         });
         if (response.status === 200 && response.data) {
-          dispatch(setGigs({ gigs: response.data.data.gigs, pagination: response.data.data.pagination }));
+          dispatch(
+            setGigs({
+              gigs: response.data.data.gigs,
+              pagination: response.data.data.pagination
+            })
+          );
           return response.data;
         }
       } catch (error: any) {
@@ -164,7 +170,12 @@ export const gigService = {
           withAuth: true
         });
         if (response.status === 200 && response.data) {
-          dispatch(setOwnGigs({ gigs: response.data.data.gigs, pagination: response.data.data.pagination }));
+          dispatch(
+            setOwnGigs({
+              gigs: response.data.data.gigs,
+              pagination: response.data.data.pagination
+            })
+          );
           return response.data;
         }
       } catch (error: any) {
@@ -200,7 +211,9 @@ export const gigService = {
     return async (dispatch: AppDispatch) => {
       try {
         dispatch(setLoading({ loading: true }));
-        const response = await apiService.post(`/gigs/bids/${gigId}`, body, { withAuth: true });
+        const response = await apiService.post(`/gigs/bids/${gigId}`, body, {
+          withAuth: true
+        });
         if (response && response.status === 201) {
           toast.success('Bid placed successfully!');
           return response.data;
@@ -218,7 +231,9 @@ export const gigService = {
     return async (dispatch: AppDispatch) => {
       try {
         dispatch(setLoading({ loading: true }));
-        const response = await apiService.patch(`/gigs/bids/${bidId}`, body, { withAuth: true });
+        const response = await apiService.patch(`/gigs/bids/${bidId}`, body, {
+          withAuth: true
+        });
         if (response && response.status === 200) {
           toast.success('Bid status updated successfully!');
           dispatch(updateBid({ id: bidId, status: body.status }));
@@ -239,7 +254,12 @@ export const gigService = {
         dispatch(setLoading({ loading: true }));
         const response: any = await apiService.get(`/gigs/bids/${gigId}?page=${page}&limit=${limit}`, { withAuth: true });
         if (response && response.status === 200) {
-          dispatch(setBids({ bids: response.data.data.items, pagination: response.data.data.pagination }));
+          dispatch(
+            setBids({
+              bids: response.data.data.items,
+              pagination: response.data.data.pagination
+            })
+          );
           return response.data;
         }
       } catch (error: any) {
@@ -249,5 +269,12 @@ export const gigService = {
         dispatch(setLoading({ loading: false }));
       }
     };
+  },
+
+  getUserGigsByiId: async (userId: string, page: number) => {
+    const response = await apiService.get<ApiResponse<any>>(`${PUBLIC_API_ROUTES.GIGS_BY_USER_ID_API}/${userId}?page=${page}&limit=4`, {
+      withAuth: false
+    });
+    return response.data;
   }
 };
